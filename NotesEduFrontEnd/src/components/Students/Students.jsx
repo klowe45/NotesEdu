@@ -47,17 +47,14 @@ const Students = () => {
             {students.map((student) => (
               <div
                 key={student.id}
-                className="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer"
+                className="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-all cursor-pointer active:scale-95 active:shadow-sm"
                 onClick={() => navigate(`/student/${student.id}`)}
               >
                 {/* Student Header */}
-                <div className="flex items-center justify-between mb-4">
+                <div className="mb-4">
                   <h3 className="text-xl font-semibold text-gray-800">
                     {student.firstName} {student.middleName} {student.lastName}
                   </h3>
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    Grade {student.grade}
-                  </span>
                 </div>
               </div>
             ))}

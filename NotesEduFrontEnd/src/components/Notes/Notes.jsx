@@ -21,7 +21,7 @@ const Notes = () => {
     "Music",
     "Physical Education",
     "Spanish",
-    "Social Studies"
+    "Social Studies",
   ];
 
   const handleReturn = () => {
@@ -33,9 +33,9 @@ const Notes = () => {
   };
 
   const handleStudentToggle = (studentId) => {
-    setSelectedStudents(prev =>
+    setSelectedStudents((prev) =>
       prev.includes(studentId)
-        ? prev.filter(id => id !== studentId)
+        ? prev.filter((id) => id !== studentId)
         : [...prev, studentId]
     );
   };
@@ -52,16 +52,23 @@ const Notes = () => {
     }
 
     // Update notes for each selected student
-    selectedStudents.forEach(studentId => {
+    selectedStudents.forEach((studentId) => {
       updateStudentNotes(studentId, notes, selectedCategory);
     });
 
-    console.log("Notes saved to students:", selectedStudents, "Notes:", notes, "Category:", selectedCategory);
+    console.log(
+      "Notes saved to students:",
+      selectedStudents,
+      "Notes:",
+      notes,
+      "Category:",
+      selectedCategory
+    );
 
     // Save data for modal before resetting
     setSavedData({
       studentCount: selectedStudents.length,
-      category: selectedCategory
+      category: selectedCategory,
     });
 
     // Show success modal
@@ -126,7 +133,7 @@ const Notes = () => {
             </button>
           </div>
           <h2 className="text-4xl font-bold text-gray-900 text-center">
-            Type notes here
+            Add Notes
           </h2>
         </div>
 
@@ -135,7 +142,9 @@ const Notes = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Notes Input Section */}
             <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
-              <h3 className="text-xl font-semibold text-gray-800 mb-4">Write Notes</h3>
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                Write Notes
+              </h3>
 
               {/* Category Selection */}
               <div className="mb-4">
@@ -163,20 +172,6 @@ const Notes = () => {
                 rows={10}
                 placeholder="Type your notes here..."
               />
-              <div className="flex gap-2 mt-4">
-                <button
-                  onClick={handleSaveNotes}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-                >
-                  Save Notes to Selected Students
-                </button>
-                <button
-                  onClick={handleClearNotes}
-                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                >
-                  Clear All
-                </button>
-              </div>
             </div>
 
             {/* Student Selection Section */}
@@ -201,30 +196,27 @@ const Notes = () => {
                       htmlFor={`student-${student.id}`}
                       className="ml-3 flex-1 cursor-pointer"
                     >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">
-                            {student.firstName} {student.middleName} {student.lastName}
-                          </p>
-                          <p className="text-xs text-gray-500">Grade {student.grade}</p>
-                        </div>
-                        <div className="flex flex-wrap gap-1">
-                          {student.subjects.slice(0, 2).map((subject, index) => (
-                            <span
-                              key={index}
-                              className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800"
-                            >
-                              {subject}
-                            </span>
-                          ))}
-                          {student.subjects.length > 2 && (
-                            <span className="text-xs text-gray-500">+{student.subjects.length - 2}</span>
-                          )}
-                        </div>
-                      </div>
+                      <p className="text-sm font-medium text-gray-900">
+                        {student.firstName} {student.middleName}{" "}
+                        {student.lastName}
+                      </p>
                     </label>
                   </div>
                 ))}
+              </div>
+              <div className="flex gap-2 mt-4">
+                <button
+                  onClick={handleSaveNotes}
+                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  Save Notes to Selected Students
+                </button>
+                <button
+                  onClick={handleClearNotes}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  Clear All
+                </button>
               </div>
             </div>
           </div>
