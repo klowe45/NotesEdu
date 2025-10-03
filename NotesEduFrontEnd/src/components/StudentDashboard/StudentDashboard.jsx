@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getStudentById, deleteStudentNotes, deleteSpecificNote } from "../utils/FakeStudents";
 
 const StudentDashboard = () => {
   const navigate = useNavigate();

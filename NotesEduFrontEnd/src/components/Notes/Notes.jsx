@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fakeStudents, updateStudentNotes } from "../utils/FakeStudents";
 import SuccessModal from "../Modal/SuccessModal";
 
 const Notes = () => {

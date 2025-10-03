@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fakeStudents } from "../utils/FakeStudents";
 
 const Students = () => {
   const navigate = useNavigate();
-  const [students] = useState(fakeStudents);
+  const [students] = useState([]);
 
   const handleReturn = () => {
     navigate("/");
