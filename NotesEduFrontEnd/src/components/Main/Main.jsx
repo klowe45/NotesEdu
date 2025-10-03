@@ -12,7 +12,7 @@ const Main = () => {
       <h2 className="flex justify-center text-3xl mt-2 mb-2.5">
         Track students progress!
       </h2>
-      <p className="flex flex-col justify-center opacity-70 text-lg">
+      <p className="flex flex-col items-center justify-center opacity-70 text-lg">
         <span>Streamline student assessment, organize</span>
         <span>notes, and gain insights into learning</span>
         <span>patterns with our intuitive teacher</span>
