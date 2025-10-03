@@ -10,7 +10,7 @@ const Main = () => {
       <Header />
       <img src={mainImg} alt="class of children" className="rounded-3xl" />
       <h2 className="flex justify-center text-3xl mt-2 mb-2.5">
-        Track clients progress!
+        Track students progress!
       </h2>
       <p className="flex flex-col justify-center opacity-70 text-lg">
         <span>Streamline student assessment, organize</span>

@@ -1,6 +1,6 @@
-// Fake client data for testing and development
+// Fake student data for testing and development
 
-export const fakeClients = [
+export const fakeStudents = [
   {
     id: 1,
     firstName: "Emma",
@@ -91,37 +91,37 @@ export const fakeClients = [
   }
 ];
 
-// Helper functions for working with fake client data
-export const getClientById = (id) => {
-  return fakeClients.find(client => client.id === id);
+// Helper functions for working with fake student data
+export const getStudentById = (id) => {
+  return fakeStudents.find(student => student.id === id);
 };
 
-export const getClientsByGrade = (grade) => {
-  return fakeClients.filter(client => client.grade === grade);
+export const getStudentsByGrade = (grade) => {
+  return fakeStudents.filter(student => student.grade === grade);
 };
 
-export const getActiveClients = () => {
-  return fakeClients.filter(client => client.isActive);
+export const getActiveStudents = () => {
+  return fakeStudents.filter(student => student.isActive);
 };
 
-export const getClientsBySubject = (subject) => {
-  return fakeClients.filter(client => client.subjects.includes(subject));
+export const getStudentsBySubject = (subject) => {
+  return fakeStudents.filter(student => student.subjects.includes(subject));
 };
 
-export const addNewClient = (clientData) => {
-  const newClient = {
-    id: Math.max(...fakeClients.map(c => c.id)) + 1,
-    ...clientData,
+export const addNewStudent = (studentData) => {
+  const newStudent = {
+    id: Math.max(...fakeStudents.map(s => s.id)) + 1,
+    ...studentData,
     createdAt: new Date().toISOString(),
     isActive: true
   };
-  fakeClients.push(newClient);
-  return newClient;
+  fakeStudents.push(newStudent);
+  return newStudent;
 };
 
-export const updateClientNotes = (clientId, newNotes, category = null) => {
-  const clientIndex = fakeClients.findIndex(client => client.id === clientId);
-  if (clientIndex !== -1) {
+export const updateStudentNotes = (studentId, newNotes, category = null) => {
+  const studentIndex = fakeStudents.findIndex(student => student.id === studentId);
+  if (studentIndex !== -1) {
     const noteWithDate = {
       content: newNotes,
       category: category,
@@ -129,31 +129,31 @@ export const updateClientNotes = (clientId, newNotes, category = null) => {
     };
 
     // Initialize notes as array if it doesn't exist or is a string (old format)
-    if (!Array.isArray(fakeClients[clientIndex].notes)) {
-      fakeClients[clientIndex].notes = [];
+    if (!Array.isArray(fakeStudents[studentIndex].notes)) {
+      fakeStudents[studentIndex].notes = [];
     }
 
     // Add new note to the array
-    fakeClients[clientIndex].notes.push(noteWithDate);
-    return fakeClients[clientIndex];
+    fakeStudents[studentIndex].notes.push(noteWithDate);
+    return fakeStudents[studentIndex];
   }
   return null;
 };
 
-export const deleteClientNotes = (clientId) => {
-  const clientIndex = fakeClients.findIndex(client => client.id === clientId);
-  if (clientIndex !== -1) {
-    fakeClients[clientIndex].notes = [];
-    return fakeClients[clientIndex];
+export const deleteStudentNotes = (studentId) => {
+  const studentIndex = fakeStudents.findIndex(student => student.id === studentId);
+  if (studentIndex !== -1) {
+    fakeStudents[studentIndex].notes = [];
+    return fakeStudents[studentIndex];
   }
   return null;
 };
 
-export const deleteSpecificNote = (clientId, noteIndex) => {
-  const clientIndex = fakeClients.findIndex(client => client.id === clientId);
-  if (clientIndex !== -1 && Array.isArray(fakeClients[clientIndex].notes)) {
-    fakeClients[clientIndex].notes.splice(noteIndex, 1);
-    return fakeClients[clientIndex];
+export const deleteSpecificNote = (studentId, noteIndex) => {
+  const studentIndex = fakeStudents.findIndex(student => student.id === studentId);
+  if (studentIndex !== -1 && Array.isArray(fakeStudents[studentIndex].notes)) {
+    fakeStudents[studentIndex].notes.splice(noteIndex, 1);
+    return fakeStudents[studentIndex];
   }
   return null;
 };

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-const SuccessModal = ({ isOpen, onClose, title, message, clientCount, category }) => {
+const SuccessModal = ({ isOpen, onClose, title, message, clientCount, studentCount, category }) => {
   useEffect(() => {
     if (isOpen) {
       // Auto-close modal after 3 seconds
@@ -37,7 +37,7 @@ const SuccessModal = ({ isOpen, onClose, title, message, clientCount, category }
             {title || "Success!"}
           </h3>
           <p className="text-gray-600 mb-4">
-            {message || `Notes saved to ${clientCount} client(s) successfully!`}
+            {message || `Notes saved to ${studentCount || clientCount} student(s) successfully!`}
           </p>
 
           {category && (

@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getClientById, deleteClientNotes, deleteSpecificNote } from "../utils/FakeClients";
+import { getStudentById, deleteStudentNotes, deleteSpecificNote } from "../utils/FakeStudents";
 
-const ClientDashboard = () => {
+const StudentDashboard = () => {
   const navigate = useNavigate();
-  const { clientId } = useParams();
-  const [client, setClient] = useState(null);
+  const { studentId } = useParams();
+  const [student, setStudent] = useState(null);
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("");
 
   const categories = [
@@ -22,52 +22,52 @@ const ClientDashboard = () => {
   ];
 
   useEffect(() => {
-    const foundClient = getClientById(parseInt(clientId));
-    setClient(foundClient);
-  }, [clientId]);
+    const foundStudent = getStudentById(parseInt(studentId));
+    setStudent(foundStudent);
+  }, [studentId]);
 
 
   const handleReturn = () => {
-    navigate("/clients");
+    navigate("/students");
   };
 
   const handleDeleteAllNotes = () => {
     if (window.confirm("Are you sure you want to delete ALL notes? This action cannot be undone.")) {
-      deleteClientNotes(parseInt(clientId));
-      // Refresh client data
-      const updatedClient = getClientById(parseInt(clientId));
-      setClient(updatedClient);
+      deleteStudentNotes(parseInt(studentId));
+      // Refresh student data
+      const updatedStudent = getStudentById(parseInt(studentId));
+      setStudent(updatedStudent);
     }
   };
 
   const handleDeleteSpecificNote = (noteIndex) => {
     if (window.confirm("Are you sure you want to delete this note? This action cannot be undone.")) {
-      deleteSpecificNote(parseInt(clientId), noteIndex);
-      // Refresh client data
-      const updatedClient = getClientById(parseInt(clientId));
-      setClient(updatedClient);
+      deleteSpecificNote(parseInt(studentId), noteIndex);
+      // Refresh student data
+      const updatedStudent = getStudentById(parseInt(studentId));
+      setStudent(updatedStudent);
     }
   };
 
   // Filter notes based on selected category
   const getFilteredNotes = () => {
-    if (!client?.notes || !Array.isArray(client.notes)) {
-      return client?.notes || [];
+    if (!student?.notes || !Array.isArray(student.notes)) {
+      return student?.notes || [];
     }
 
     if (!selectedCategoryFilter) {
-      return client.notes;
+      return student.notes;
     }
 
-    return client.notes.filter(note => note.category === selectedCategoryFilter);
+    return student.notes.filter(note => note.category === selectedCategoryFilter);
   };
 
-  if (!client) {
+  if (!student) {
     return (
       <div className="p-4 pb-20">
         <div className="container mx-auto">
           <div className="text-center">
-            <p className="text-gray-600">Client not found</p>
+            <p className="text-gray-600">Student not found</p>
           </div>
         </div>
       </div>
@@ -87,14 +87,14 @@ const ClientDashboard = () => {
               <svg className="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
-              <span className="font-medium">Back to Clients</span>
+              <span className="font-medium">Back to Students</span>
             </button>
           </div>
           <h1 className="text-4xl font-bold text-gray-900 text-center">
-            {client.firstName} {client.middleName.charAt(0)}. {client.lastName}
+            {student.firstName} {student.middleName.charAt(0)}. {student.lastName}
           </h1>
           <p className="text-center text-gray-600 text-lg mt-2">
-            Grade {client.grade} Dashboard
+            Grade {student.grade} Dashboard
           </p>
         </div>
 
@@ -136,7 +136,7 @@ const ClientDashboard = () => {
           </div>
         </div>
 
-        {/* Client Information */}
+        {/* Student Information */}
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Basic Info Card */}
@@ -145,22 +145,22 @@ const ClientDashboard = () => {
               <div className="space-y-3">
                 <div>
                   <span className="font-medium text-gray-700">Name:</span>
-                  <span className="ml-2 text-gray-600">{client.firstName} {client.middleName.charAt(0)}. {client.lastName}</span>
+                  <span className="ml-2 text-gray-600">{student.firstName} {student.middleName.charAt(0)}. {student.lastName}</span>
                 </div>
                 <div>
                   <span className="font-medium text-gray-700">Grade:</span>
                   <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    Grade {client.grade}
+                    Grade {student.grade}
                   </span>
                 </div>
                 <div>
                   <span className="font-medium text-gray-700">Created:</span>
-                  <span className="ml-2 text-gray-600">{new Date(client.createdAt).toLocaleDateString()}</span>
+                  <span className="ml-2 text-gray-600">{new Date(student.createdAt).toLocaleDateString()}</span>
                 </div>
                 <div>
                   <span className="font-medium text-gray-700">Status:</span>
-                  <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${client.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                    {client.isActive ? 'Active' : 'Inactive'}
+                  <span className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${student.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    {student.isActive ? 'Active' : 'Inactive'}
                   </span>
                 </div>
               </div>
@@ -170,7 +170,7 @@ const ClientDashboard = () => {
             <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-semibold text-gray-800">Notes</h3>
-                {client.notes && Array.isArray(client.notes) && client.notes.length > 0 && (
+                {student.notes && Array.isArray(student.notes) && student.notes.length > 0 && (
                   <button
                     onClick={handleDeleteAllNotes}
                     className="flex items-center px-3 py-1.5 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
@@ -188,7 +188,7 @@ const ClientDashboard = () => {
                   return Array.isArray(filteredNotes) && filteredNotes.length > 0 ? (
                     filteredNotes.map((note, index) => {
                       // Find the original index for deletion
-                      const originalIndex = client.notes.findIndex(originalNote => originalNote === note);
+                      const originalIndex = student.notes.findIndex(originalNote => originalNote === note);
                       return (
                     <div key={index} className="border border-gray-200 rounded-lg p-4 bg-gray-50">
                       <div className="flex items-start justify-between mb-2">
@@ -216,9 +216,9 @@ const ClientDashboard = () => {
                     </div>
                       );
                     })
-                  ) : client.notes && typeof client.notes === 'string' ? (
+                  ) : student.notes && typeof student.notes === 'string' ? (
                     <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-                      <p className="text-gray-600 leading-relaxed">{client.notes}</p>
+                      <p className="text-gray-600 leading-relaxed">{student.notes}</p>
                     </div>
                   ) : selectedCategoryFilter ? (
                     <p className="text-gray-400 italic">No notes found for {selectedCategoryFilter} category.</p>
@@ -235,4 +235,4 @@ const ClientDashboard = () => {
   );
 };
 
-export default ClientDashboard;
+export default StudentDashboard;

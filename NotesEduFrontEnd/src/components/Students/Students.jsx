@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fakeClients } from "../utils/FakeClients";
+import { fakeStudents } from "../utils/FakeStudents";
 
-const Clients = () => {
+const Students = () => {
   const navigate = useNavigate();
-  const [clients] = useState(fakeClients);
+  const [students] = useState(fakeStudents);
 
   const handleReturn = () => {
     navigate("/");
@@ -37,29 +37,28 @@ const Clients = () => {
             </button>
           </div>
           <h2 className="text-4xl font-bold text-gray-900 text-center">
-            Clients
+            Students
           </h2>
         </div>
 
-        {/* Clients Grid */}
+        {/* Students Grid */}
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {clients.map((client) => (
+            {students.map((student) => (
               <div
-                key={client.id}
+                key={student.id}
                 className="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer"
-                onClick={() => navigate(`/client/${client.id}`)}
+                onClick={() => navigate(`/student/${student.id}`)}
               >
-                {/* Client Header */}
+                {/* Student Header */}
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-semibold text-gray-800">
-                    {client.firstName} {client.middleName} {client.lastName}
+                    {student.firstName} {student.middleName} {student.lastName}
                   </h3>
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    Grade {client.grade}
+                    Grade {student.grade}
                   </span>
                 </div>
-
               </div>
             ))}
           </div>
@@ -69,4 +68,4 @@ const Clients = () => {
   );
 };
 
-export default Clients;
+export default Students;

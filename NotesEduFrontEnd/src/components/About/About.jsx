@@ -6,7 +6,7 @@ const About = () => {
       </h3>
       <div className="flex flex-col justify-center opacity-70 text-lg mb-2">
         <span className="flex justify-center">
-          Focus Board makes it easy to track client
+          Focus Board makes it easy to track student
         </span>
         <span className="flex justify-center">
           progress, manage charts, and stay

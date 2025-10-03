@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import FormSample from "../FormSample/FormSample";
 
-const CreateClient = () => {
+const CreateStudent = () => {
   const navigate = useNavigate();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -11,14 +11,14 @@ const CreateClient = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const createdClientData = {
+    const createdStudentData = {
       firstName: firstName,
       lastName: lastName,
 
       createdAt: new Date().toISOString(),
     };
 
-    console.log("Created Client Data:", createdClientData);
+    console.log("Created Student Data:", createdStudentData);
 
     navigate("/");
   };
@@ -54,10 +54,10 @@ const CreateClient = () => {
         </div>
         <div className="text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Create New Client
+            Create New Student
           </h1>
           <p className="text-lg text-gray-600">
-            Add a new client to your dashboard
+            Add a new student to your dashboard
           </p>
         </div>
       </div>
@@ -65,8 +65,8 @@ const CreateClient = () => {
       {/* Form Container */}
       <div className="max-w-2xl mx-auto">
         <FormSample
-          title="Client Information"
-          submitText="Create Client"
+          title="Student Information"
+          submitText="Create Student"
           onSubmit={handleSubmit}
         >
           <div className="space-y-4">
@@ -114,4 +114,4 @@ const CreateClient = () => {
   );
 };
 
-export default CreateClient;
+export default CreateStudent;
