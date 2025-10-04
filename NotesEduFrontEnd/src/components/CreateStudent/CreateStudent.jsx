@@ -1,26 +1,64 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import FormSample from "../FormSample/FormSample";
+import { createStudent } from "../../api/studentsApi";
 
 const CreateStudent = () => {
   const navigate = useNavigate();
   const [firstName, setFirstName] = useState("");
+  const [middleName, setMiddleName] = useState("");
   const [lastName, setLastName] = useState("");
   const [grade, setGrade] = useState("");
+  const [error, setError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
-    const createdStudentData = {
-      firstName: firstName,
-      lastName: lastName,
+    // Validation
+    if (!firstName.trim()) {
+      setError("First name is required");
+      return;
+    }
 
-      createdAt: new Date().toISOString(),
-    };
+    if (!lastName.trim()) {
+      setError("Last name is required");
+      return;
+    }
 
-    console.log("Created Student Data:", createdStudentData);
+    // Grade is optional, but if provided must be valid
+    let gradeNum = null;
+    if (grade.trim()) {
+      gradeNum = parseInt(grade);
+      if (isNaN(gradeNum) || gradeNum < 1 || gradeNum > 12) {
+        setError("Grade must be a number between 1 and 12");
+        return;
+      }
+    }
 
-    navigate("/");
+    setIsSubmitting(true);
+
+    try {
+      const studentData = {
+        first_name: firstName.trim(),
+        middle_name: middleName.trim() || null,
+        last_name: lastName.trim(),
+        grade: gradeNum,
+      };
+
+      const result = await createStudent(studentData);
+      console.log("Student created:", result);
+
+      navigate("/students");
+    } catch (error) {
+      console.error("Error creating student:", error);
+      setError(
+        error.message || "Failed to create student. Please check your connection and try again."
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleReturn = () => {
@@ -64,9 +102,14 @@ const CreateStudent = () => {
 
       {/* Form Container */}
       <div className="max-w-2xl mx-auto">
+        {error && (
+          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-800 text-sm">{error}</p>
+          </div>
+        )}
         <FormSample
           title="Student Information"
-          submitText="Create Student"
+          submitText={isSubmitting ? "Creating..." : "Create Student"}
           onSubmit={handleSubmit}
         >
           <div className="space-y-4">
@@ -91,21 +134,57 @@ const CreateStudent = () => {
 
               <div className="space-y-2">
                 <label
-                  htmlFor="lastname"
+                  htmlFor="middlename"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Last Name
+                  Middle Name
                 </label>
                 <input
-                  id="lastname"
+                  id="middlename"
                   type="text"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
+                  value={middleName}
+                  onChange={(e) => setMiddleName(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-                  placeholder="Enter last name"
-                  required
+                  placeholder="Enter middle name (optional)"
                 />
               </div>
+            </div>
+
+            <div className="space-y-2">
+              <label
+                htmlFor="lastname"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Last Name
+              </label>
+              <input
+                id="lastname"
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                placeholder="Enter last name"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label
+                htmlFor="grade"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Grade (Optional)
+              </label>
+              <input
+                id="grade"
+                type="number"
+                min="1"
+                max="12"
+                value={grade}
+                onChange={(e) => setGrade(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                placeholder="Enter grade (1-12, optional)"
+              />
             </div>
           </div>
         </FormSample>

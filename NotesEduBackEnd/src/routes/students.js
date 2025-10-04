@@ -13,6 +13,35 @@ router.get("/", async (_req, res, next) => {
   }
 });
 
+router.post("/", async (req, res, next) => {
+  try {
+    const { first_name, middle_name, last_name, grade } = req.body;
+    const { rows } = await pool.query(
+      `insert into students (first_name, middle_name, last_name, grade)
+       values ($1, $2, $3, $4) returning *`,
+      [first_name, middle_name || null, last_name, grade]
+    );
+    res.status(201).json(rows[0]);
+  } catch (e) {
+    next(e);
+  }
+});
+
+router.get("/:id", async (req, res, next) => {
+  try {
+    const { rows } = await pool.query(
+      "select id, first_name, middle_name, last_name, grade, created_at from students where id = $1",
+      [req.params.id]
+    );
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Student not found" });
+    }
+    res.json(rows[0]);
+  } catch (e) {
+    next(e);
+  }
+});
+
 router.get("/:id/notes", async (req, res, next) => {
   try {
     const { rows } = await pool.query(

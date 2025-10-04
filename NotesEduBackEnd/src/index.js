@@ -14,8 +14,13 @@ app.use("/api/teachers", teachers);
 app.use("/api/notes", notes);
 
 app.use((err, _req, res, _next) => {
-  console.error(err);
-  res.status(500).json({ error: "Server error" });
+  console.error("❌ Error details:", {
+    code: err.code,
+    message: err.message,
+    detail: err.detail,
+    stack: err.stack,
+  });
+  res.status(500).json({ error: err.message || "Server error" });
 });
 
 const port = process.env.PORT || 4000;

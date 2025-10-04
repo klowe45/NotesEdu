@@ -4,7 +4,7 @@ const Actions = () => {
   const navigate = useNavigate();
 
   const handleCreateStudentClick = () => {
-    navigate("createstudent");
+    navigate("create-student");
   };
 
   const handleNotesClick = () => {

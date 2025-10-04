@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import SuccessModal from "../Modal/SuccessModal";
+import { getAllStudents } from "../../api/studentsApi";
+import { createNote } from "../../api/notesApi";
 
 const Notes = () => {
   const navigate = useNavigate();
@@ -9,6 +11,9 @@ const Notes = () => {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [savedData, setSavedData] = useState({ studentCount: 0, category: "" });
+  const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const categories = [
     "Reading",
@@ -22,6 +27,23 @@ const Notes = () => {
     "Spanish",
     "Social Studies",
   ];
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        setLoading(true);
+        const data = await getAllStudents();
+        setStudents(data);
+      } catch (err) {
+        console.error("Error fetching students:", err);
+        setError("Failed to load students. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStudents();
+  }, []);
 
   const handleReturn = () => {
     navigate("/");
@@ -39,7 +61,7 @@ const Notes = () => {
     );
   };
 
-  const handleSaveNotes = () => {
+  const handleSaveNotes = async () => {
     if (selectedStudents.length === 0) {
       alert("Please select at least one student to save notes to.");
       return;
@@ -50,33 +72,49 @@ const Notes = () => {
       return;
     }
 
-    // Update notes for each selected student
-    selectedStudents.forEach((studentId) => {
-      updateStudentNotes(studentId, notes, selectedCategory);
-    });
+    if (!notes.trim()) {
+      alert("Please enter some notes.");
+      return;
+    }
 
-    console.log(
-      "Notes saved to students:",
-      selectedStudents,
-      "Notes:",
-      notes,
-      "Category:",
-      selectedCategory
-    );
+    try {
+      // Create notes for each selected student
+      const notePromises = selectedStudents.map((studentId) =>
+        createNote(studentId, {
+          teacher_id: null, // You can add teacher selection later
+          title: selectedCategory,
+          body: notes.trim(),
+        })
+      );
 
-    // Save data for modal before resetting
-    setSavedData({
-      studentCount: selectedStudents.length,
-      category: selectedCategory,
-    });
+      await Promise.all(notePromises);
 
-    // Show success modal
-    setShowSuccessModal(true);
+      console.log(
+        "Notes saved to students:",
+        selectedStudents,
+        "Notes:",
+        notes,
+        "Category:",
+        selectedCategory
+      );
 
-    // Reset after saving
-    setNotes("");
-    setSelectedStudents([]);
-    setSelectedCategory("");
+      // Save data for modal before resetting
+      setSavedData({
+        studentCount: selectedStudents.length,
+        category: selectedCategory,
+      });
+
+      // Show success modal
+      setShowSuccessModal(true);
+
+      // Reset after saving
+      setNotes("");
+      setSelectedStudents([]);
+      setSelectedCategory("");
+    } catch (err) {
+      console.error("Error saving notes:", err);
+      alert("Failed to save notes. Please try again.");
+    }
   };
 
   const handleClearNotes = () => {
@@ -178,31 +216,49 @@ const Notes = () => {
               <h3 className="text-xl font-semibold text-gray-800 mb-4">
                 Select Students ({selectedStudents.length} selected)
               </h3>
-              <div className="space-y-3 max-h-80 overflow-y-auto">
-                {fakeStudents.map((student) => (
-                  <div
-                    key={student.id}
-                    className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    <input
-                      type="checkbox"
-                      id={`student-${student.id}`}
-                      checked={selectedStudents.includes(student.id)}
-                      onChange={() => handleStudentToggle(student.id)}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                    <label
-                      htmlFor={`student-${student.id}`}
-                      className="ml-3 flex-1 cursor-pointer"
+              {error && (
+                <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-red-800 text-sm">{error}</p>
+                </div>
+              )}
+              {loading ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-600">Loading students...</p>
+                </div>
+              ) : students.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-600">No students found.</p>
+                  <p className="text-gray-500 text-sm mt-2">
+                    Create a student first.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-3 max-h-80 overflow-y-auto">
+                  {students.map((student) => (
+                    <div
+                      key={student.id}
+                      className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                     >
-                      <p className="text-sm font-medium text-gray-900">
-                        {student.firstName} {student.middleName}{" "}
-                        {student.lastName}
-                      </p>
-                    </label>
-                  </div>
-                ))}
-              </div>
+                      <input
+                        type="checkbox"
+                        id={`student-${student.id}`}
+                        checked={selectedStudents.includes(student.id)}
+                        onChange={() => handleStudentToggle(student.id)}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                      <label
+                        htmlFor={`student-${student.id}`}
+                        className="ml-3 flex-1 cursor-pointer"
+                      >
+                        <p className="text-sm font-medium text-gray-900">
+                          {student.first_name} {student.middle_name}{" "}
+                          {student.last_name}
+                        </p>
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              )}
               <div className="flex gap-2 mt-4">
                 <button
                   onClick={handleSaveNotes}

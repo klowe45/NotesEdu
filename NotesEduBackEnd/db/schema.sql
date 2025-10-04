@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS students (
   first_name VARCHAR(100) NOT NULL,
   middle_name VARCHAR(100),
   last_name VARCHAR(100) NOT NULL,
-  grade INT NOT NULL,
+  grade INT,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
