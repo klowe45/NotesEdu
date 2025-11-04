@@ -144,7 +144,7 @@ const StudentDashboard = () => {
                 )}
                 <button
                   onClick={() => setSelectedCategoryFilter("")}
-                  className="px-3 py-1.5 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                  className="px-2 py-1 text-xs text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
                   disabled={!selectedCategoryFilter}
                 >
                   Clear Filter

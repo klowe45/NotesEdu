@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import Main from "./components/Main/Main";
 import Footer from "./components/Footer/Footer";
@@ -6,15 +6,27 @@ import CreateStudent from "./components/CreateStudent/CreateStudent";
 import Notes from "./components/Notes/Notes";
 import Students from "./components/Students/Students";
 import StudentDashboard from "./components/StudentDashboard/StudentDashboard";
+import Signup from "./components/Signup/Signup";
+import Signin from "./components/Signin/Signin";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
+
+  // Check if teacher is logged in on mount
+  useEffect(() => {
+    const teacher = localStorage.getItem("teacher");
+    if (teacher) {
+      setLoggedIn(true);
+    }
+  }, []);
 
   return (
     <div className="relative w-full max-w-[100vw]">
       <div className="mx-auto w-full max-w-screen px-4 sm:px-6 lg:px-8">
         <Routes>
-          <Route path="/" element={<Main loggedIn={loggedIn} />}></Route>
+          <Route path="/" element={<Main loggedIn={loggedIn} setLoggedIn={setLoggedIn} />}></Route>
+          <Route path="signup" element={<Signup />}></Route>
+          <Route path="signin" element={<Signin setLoggedIn={setLoggedIn} />}></Route>
           <Route path="create-student" element={<CreateStudent />}></Route>
           <Route path="notes" element={<Notes />}></Route>
           <Route path="students" element={<Students />}></Route>

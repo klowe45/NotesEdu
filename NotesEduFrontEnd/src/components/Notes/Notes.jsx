@@ -78,10 +78,15 @@ const Notes = () => {
     }
 
     try {
+      // Get logged-in teacher ID from localStorage
+      const teacherData = localStorage.getItem("teacher");
+      const teacher = teacherData ? JSON.parse(teacherData) : null;
+      const teacherId = teacher?.id || null;
+
       // Create notes for each selected student
       const notePromises = selectedStudents.map((studentId) =>
         createNote(studentId, {
-          teacher_id: null, // You can add teacher selection later
+          teacher_id: teacherId,
           title: selectedCategory,
           body: notes.trim(),
         })

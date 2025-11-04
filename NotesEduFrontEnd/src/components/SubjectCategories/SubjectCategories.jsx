@@ -7,13 +7,9 @@ const SubjectCategories = () => {
     "Reading",
     "Writing",
     "Math",
-    "Science",
-    "History",
     "Art",
     "Music",
     "Physical Education",
-    "Spanish",
-    "Social Studies"
   ]);
 
   const handleReturn = () => {
@@ -21,7 +17,7 @@ const SubjectCategories = () => {
   };
 
   return (
-    <div className="p-4 pb-20">
+    <div className="min-h-screen flex items-center justify-center p-4 pb-20">
       <div className="container mx-auto">
         {/* Header with Return Button */}
         <div className="mb-8">
