@@ -14,6 +14,25 @@ const Main = ({ loggedIn, setLoggedIn }) => {
     <main className="flex-1 pb-20">
       <Header loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
       <img src={mainImg} alt="class of children" className="rounded-3xl" />
+
+      {/* Sign In and Sign Up buttons - Only show when not logged in */}
+      {!loggedIn && (
+        <div className="flex justify-center gap-4 mt-6 mb-4">
+          <button
+            onClick={() => navigate("/signin")}
+            className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium text-lg"
+          >
+            Sign In
+          </button>
+          <button
+            onClick={() => navigate("/signup")}
+            className="px-8 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors font-medium text-lg"
+          >
+            Sign Up
+          </button>
+        </div>
+      )}
+
       <h2 className="flex justify-center text-3xl mt-2 mb-2.5">
         Track students progress!
       </h2>

@@ -5,6 +5,8 @@ import students from "./routes/students.js";
 import teachers from "./routes/teachers.js";
 import notes from "./routes/notes.js";
 import auth from "./routes/auth.js";
+import attendance from "./routes/attendance.js";
+import documents from "./routes/documents.js";
 
 const app = express();
 app.use(cors());
@@ -14,6 +16,8 @@ app.use("/api/auth", auth);
 app.use("/api/students", students);
 app.use("/api/teachers", teachers);
 app.use("/api/notes", notes);
+app.use("/api/attendance", attendance);
+app.use("/api/documents", documents);
 
 app.use((err, _req, res, _next) => {
   console.error("❌ Error details:", {

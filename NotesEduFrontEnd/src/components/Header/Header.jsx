@@ -41,11 +41,9 @@ const Header = ({ loggedIn, setLoggedIn }) => {
         </div>
       )}
 
-      <h1 className="text-black text-4xl font-bold m-0 ml-[10px]">NotesEdu</h1>
-
-      {/* Dropdown Button - Right side - Only show when not logged in */}
+      {/* Dropdown Button - Left side - Only show when not logged in */}
       {!loggedIn && (
-        <div className="absolute right-0">
+        <div className="absolute left-0">
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="flex items-center px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
@@ -67,7 +65,7 @@ const Header = ({ loggedIn, setLoggedIn }) => {
 
           {/* Dropdown Menu */}
           {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-10">
+            <div className="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-10">
               <button
                 onClick={() => {
                   navigate("/signin");
@@ -90,6 +88,8 @@ const Header = ({ loggedIn, setLoggedIn }) => {
           )}
         </div>
       )}
+
+      <h1 className="text-black text-4xl font-bold m-0 ml-[10px]">NotesEdu</h1>
     </header>
   );
 };

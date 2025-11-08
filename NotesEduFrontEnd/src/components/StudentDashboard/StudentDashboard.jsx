@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getStudentById } from "../../api/studentsApi";
 import { getStudentNotes } from "../../api/notesApi";
+import { getStudentAttendance } from "../../api/attendanceApi";
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
   const { studentId } = useParams();
   const [student, setStudent] = useState(null);
   const [notes, setNotes] = useState([]);
+  const [attendance, setAttendance] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("");
@@ -33,6 +35,15 @@ const StudentDashboard = () => {
         const notesData = await getStudentNotes(studentId);
         setStudent(studentData);
         setNotes(notesData);
+
+        // Fetch attendance records after we have student data
+        if (studentData) {
+          const attendanceData = await getStudentAttendance(
+            studentData.first_name,
+            studentData.last_name
+          );
+          setAttendance(attendanceData);
+        }
       } catch (err) {
         console.error("Error fetching student data:", err);
         setError("Failed to load student data. Please try again.");
@@ -218,6 +229,51 @@ const StudentDashboard = () => {
                   );
                 })()}
               </div>
+            </div>
+          </div>
+
+          {/* Attendance Records Section */}
+          <div className="mt-8">
+            <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">Attendance Records</h3>
+              {attendance.length === 0 ? (
+                <p className="text-gray-400 italic">No attendance records found.</p>
+              ) : (
+                <div className="space-y-3">
+                  {attendance
+                    .sort((a, b) => new Date(b.date) - new Date(a.date))
+                    .map((record) => (
+                      <div
+                        key={record.id}
+                        className={`flex items-center justify-between p-4 rounded-lg border ${
+                          record.appeared
+                            ? 'bg-green-50 border-green-200'
+                            : 'bg-red-50 border-red-200'
+                        }`}
+                      >
+                        <div>
+                          <p className="font-medium text-gray-800">
+                            {new Date(record.date).toLocaleDateString('en-US', {
+                              weekday: 'long',
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric'
+                            })}
+                          </p>
+                        </div>
+                        <span
+                          className={`px-3 py-1 rounded-full text-sm font-medium ${
+                            record.appeared
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-red-100 text-red-800'
+                          }`}
+                        >
+                          {record.appeared ? 'Present' : 'Absent'}
+                        </span>
+                      </div>
+                    ))}
+                </div>
+              )}
             </div>
           </div>
         </div>

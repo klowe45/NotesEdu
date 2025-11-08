@@ -104,12 +104,12 @@ const Students = () => {
               {students.map((student) => (
                 <div
                   key={student.id}
-                  className="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-all cursor-pointer active:scale-95 active:shadow-sm"
+                  className="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-all cursor-pointer active:scale-95 active:shadow-sm flex items-center justify-center"
                   onClick={() => navigate(`/student/${student.id}`)}
                 >
                   {/* Student Header */}
-                  <div className="mb-4">
-                    <h3 className="text-xl font-semibold text-gray-800">
+                  <div>
+                    <h3 className="text-xl font-semibold text-gray-800 text-center">
                       {student.first_name} {student.middle_name}{" "}
                       {student.last_name}
                     </h3>

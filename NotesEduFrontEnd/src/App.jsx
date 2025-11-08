@@ -8,6 +8,10 @@ import Students from "./components/Students/Students";
 import StudentDashboard from "./components/StudentDashboard/StudentDashboard";
 import Signup from "./components/Signup/Signup";
 import Signin from "./components/Signin/Signin";
+import Attendance from "./components/Attendance/Attendance";
+import AttendanceHistory from "./components/AttendanceHistory/AttendanceHistory";
+import BehavioralReports from "./components/BehavioralReports/BehavioralReports";
+import UploadReports from "./components/UploadReports/UploadReports";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -30,6 +34,10 @@ function App() {
           <Route path="create-student" element={<CreateStudent />}></Route>
           <Route path="notes" element={<Notes />}></Route>
           <Route path="students" element={<Students />}></Route>
+          <Route path="attendance" element={<Attendance />}></Route>
+          <Route path="attendance-history" element={<AttendanceHistory />}></Route>
+          <Route path="behavioral-reports" element={<BehavioralReports />}></Route>
+          <Route path="upload-reports/:studentId" element={<UploadReports />}></Route>
           <Route
             path="student/:studentId"
             element={<StudentDashboard />}
