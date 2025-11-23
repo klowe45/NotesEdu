@@ -105,7 +105,7 @@ const Signup = () => {
         </div>
         <div className="text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Sign Up</h1>
-          <p className="text-lg text-gray-600">Create your NotesEdu account</p>
+          <p className="text-lg text-gray-600">Create your NeuroNotes account</p>
         </div>
       </div>
 

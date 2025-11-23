@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getStudentById } from "../../api/studentsApi";
-import { getStudentNotes } from "../../api/notesApi";
-import { getStudentAttendance } from "../../api/attendanceApi";
+import { getClientById } from "../../api/clientsApi";
+import { getClientNotes } from "../../api/notesApi";
+import { getClientAttendance } from "../../api/attendanceApi";
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
-  const { studentId } = useParams();
-  const [student, setStudent] = useState(null);
+  const { clientId } = useParams();
+  const [client, setClient] = useState(null);
   const [notes, setNotes] = useState([]);
   const [attendance, setAttendance] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,35 +26,35 @@ const StudentDashboard = () => {
   ];
 
   useEffect(() => {
-    const fetchStudentData = async () => {
+    const fetchClientData = async () => {
       try {
         setLoading(true);
-        const studentData = await getStudentById(studentId);
-        const notesData = await getStudentNotes(studentId);
-        setStudent(studentData);
+        const clientData = await getClientById(clientId);
+        const notesData = await getClientNotes(clientId);
+        setClient(clientData);
         setNotes(notesData);
 
-        // Fetch attendance records after we have student data
-        if (studentData) {
-          const attendanceData = await getStudentAttendance(
-            studentData.first_name,
-            studentData.last_name
+        // Fetch attendance records after we have client data
+        if (clientData) {
+          const attendanceData = await getClientAttendance(
+            clientData.first_name,
+            clientData.last_name
           );
           setAttendance(attendanceData);
         }
       } catch (err) {
-        console.error("Error fetching student data:", err);
-        setError("Failed to load student data. Please try again.");
+        console.error("Error fetching client data:", err);
+        setError("Failed to load client data. Please try again.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchStudentData();
-  }, [studentId]);
+    fetchClientData();
+  }, [clientId]);
 
   const handleReturn = () => {
-    navigate("/students");
+    navigate("/clients");
   };
 
   // Filter notes based on selected category
@@ -75,26 +75,26 @@ const StudentDashboard = () => {
       <div className="p-4 pb-20">
         <div className="container mx-auto">
           <div className="text-center py-12">
-            <p className="text-gray-600 text-lg">Loading student data...</p>
+            <p className="text-gray-600 text-lg">Loading client data...</p>
           </div>
         </div>
       </div>
     );
   }
 
-  if (error || !student) {
+  if (error || !client) {
     return (
       <div className="p-4 pb-20">
         <div className="container mx-auto">
           <div className="text-center py-12">
             <p className="text-red-600 text-lg">
-              {error || "Student not found"}
+              {error || "Client not found"}
             </p>
             <button
               onClick={handleReturn}
               className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
             >
-              Back to Students
+              Back to Clients
             </button>
           </div>
         </div>
@@ -125,13 +125,13 @@ const StudentDashboard = () => {
                   d="M15 19l-7-7 7-7"
                 />
               </svg>
-              <span className="font-medium">Back to Students</span>
+              <span className="font-medium">Back to Clients</span>
             </button>
           </div>
           <h1 className="text-4xl font-bold text-gray-900 text-center">
-            {student.first_name}{" "}
-            {student.middle_name ? `${student.middle_name.charAt(0)}. ` : ""}
-            {student.last_name}
+            {client.first_name}{" "}
+            {client.middle_name ? `${client.middle_name.charAt(0)}. ` : ""}
+            {client.last_name}
           </h1>
           <p className="text-center text-gray-600 text-lg mt-2">
             Dashboard
@@ -194,17 +194,17 @@ const StudentDashboard = () => {
                 <div>
                   <span className="font-medium text-gray-700">Name:</span>
                   <span className="ml-2 text-gray-600">
-                    {student.first_name}{" "}
-                    {student.middle_name
-                      ? `${student.middle_name.charAt(0)}. `
+                    {client.first_name}{" "}
+                    {client.middle_name
+                      ? `${client.middle_name.charAt(0)}. `
                       : ""}
-                    {student.last_name}
+                    {client.last_name}
                   </span>
                 </div>
                 <div>
                   <span className="font-medium text-gray-700">Created:</span>
                   <span className="ml-2 text-gray-600">
-                    {new Date(student.created_at).toLocaleDateString()}
+                    {new Date(client.created_at).toLocaleDateString()}
                   </span>
                 </div>
               </div>

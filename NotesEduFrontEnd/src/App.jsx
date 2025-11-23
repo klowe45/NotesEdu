@@ -32,16 +32,16 @@ function App() {
           <Route path="/" element={<Main loggedIn={loggedIn} setLoggedIn={setLoggedIn} />}></Route>
           <Route path="signup" element={<Signup />}></Route>
           <Route path="signin" element={<Signin setLoggedIn={setLoggedIn} />}></Route>
-          <Route path="create-student" element={<CreateStudent />}></Route>
+          <Route path="create-client" element={<CreateStudent />}></Route>
           <Route path="notes" element={<Notes />}></Route>
-          <Route path="students" element={<Students />}></Route>
+          <Route path="clients" element={<Students />}></Route>
           <Route path="attendance" element={<Attendance />}></Route>
           <Route path="attendance-history" element={<AttendanceHistory />}></Route>
           <Route path="behavioral-reports" element={<BehavioralReports />}></Route>
-          <Route path="upload-reports/:studentId" element={<UploadReports />}></Route>
+          <Route path="upload-reports/:clientId" element={<UploadReports />}></Route>
           <Route path="dailies" element={<Dailies />}></Route>
           <Route
-            path="student/:studentId"
+            path="client/:clientId"
             element={<StudentDashboard />}
           ></Route>
         </Routes>

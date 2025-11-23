@@ -1,28 +1,28 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllStudents } from "../../api/studentsApi";
+import { getAllClients } from "../../api/clientsApi";
 
 const Students = () => {
   const navigate = useNavigate();
-  const [students, setStudents] = useState([]);
+  const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchStudents = async () => {
+    const fetchClients = async () => {
       try {
         setLoading(true);
-        const data = await getAllStudents();
-        setStudents(data);
+        const data = await getAllClients();
+        setClients(data);
       } catch (err) {
-        console.error("Error fetching students:", err);
-        setError("Failed to load students. Please try again.");
+        console.error("Error fetching clients:", err);
+        setError("Failed to load clients. Please try again.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchStudents();
+    fetchClients();
   }, []);
 
   const handleReturn = () => {
@@ -57,7 +57,7 @@ const Students = () => {
 
             <button
               className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              onClick={() => navigate("/create-student")}
+              onClick={() => navigate("/create-client")}
             >
               <svg
                 className="w-5 h-5 mr-2"
@@ -72,15 +72,15 @@ const Students = () => {
                   d="M12 4v16m8-8H4"
                 />
               </svg>
-              <span className="font-medium">Create Another Student</span>
+              <span className="font-medium">Create Another Client</span>
             </button>
           </div>
           <h2 className="text-4xl font-bold text-gray-900 text-center">
-            Students
+            Clients
           </h2>
         </div>
 
-        {/* Students Grid */}
+        {/* Clients Grid */}
         <div className="max-w-6xl mx-auto">
           {error && (
             <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -90,28 +90,28 @@ const Students = () => {
 
           {loading ? (
             <div className="text-center py-12">
-              <p className="text-gray-600 text-lg">Loading students...</p>
+              <p className="text-gray-600 text-lg">Loading clients...</p>
             </div>
-          ) : students.length === 0 ? (
+          ) : clients.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-600 text-lg">No students found.</p>
+              <p className="text-gray-600 text-lg">No clients found.</p>
               <p className="text-gray-500 text-sm mt-2">
-                Create a new student to get started.
+                Create a new client to get started.
               </p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {students.map((student) => (
+              {clients.map((client) => (
                 <div
-                  key={student.id}
+                  key={client.id}
                   className="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-all cursor-pointer active:scale-95 active:shadow-sm flex items-center justify-center"
-                  onClick={() => navigate(`/student/${student.id}`)}
+                  onClick={() => navigate(`/client/${client.id}`)}
                 >
-                  {/* Student Header */}
+                  {/* Client Header */}
                   <div>
                     <h3 className="text-xl font-semibold text-gray-800 text-center">
-                      {student.first_name} {student.middle_name}{" "}
-                      {student.last_name}
+                      {client.first_name} {client.middle_name}{" "}
+                      {client.last_name}
                     </h3>
                   </div>
                 </div>

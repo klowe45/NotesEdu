@@ -14,11 +14,11 @@ export async function getAllAttendance() {
   return r.json();
 }
 
-export async function getStudentAttendance(firstName, lastName) {
+export async function getClientAttendance(firstName, lastName) {
   const r = await fetch(`${API}/attendance`);
   const allAttendance = await r.json();
 
-  // Filter attendance records for this specific student
+  // Filter attendance records for this specific client
   return allAttendance.filter(record =>
     record.first_name === firstName && record.last_name === lastName
   );

@@ -1,20 +1,20 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllStudents } from "../../api/studentsApi";
+import { getAllClients } from "../../api/clientsApi";
 import { createDaily } from "../../api/dailiesApi";
 import SuccessModal from "../Modal/SuccessModal";
 
 const Dailies = () => {
   const navigate = useNavigate();
-  const [students, setStudents] = useState([]);
+  const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [dailyText, setDailyText] = useState("");
-  const [selectedStudents, setSelectedStudents] = useState([]);
+  const [selectedClients, setSelectedClients] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [savedData, setSavedData] = useState({
-    studentCount: 0,
+    clientCount: 0,
     categories: [],
   });
 
@@ -30,20 +30,20 @@ const Dailies = () => {
   ];
 
   useEffect(() => {
-    const fetchStudents = async () => {
+    const fetchClients = async () => {
       try {
         setLoading(true);
-        const data = await getAllStudents();
-        setStudents(data);
+        const data = await getAllClients();
+        setClients(data);
       } catch (err) {
-        console.error("Error fetching students:", err);
-        setError("Failed to load students. Please try again.");
+        console.error("Error fetching clients:", err);
+        setError("Failed to load clients. Please try again.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchStudents();
+    fetchClients();
   }, []);
 
   const handleReturn = () => {
@@ -54,11 +54,11 @@ const Dailies = () => {
     setDailyText(e.target.value);
   };
 
-  const handleStudentToggle = (studentId) => {
-    setSelectedStudents((prev) =>
-      prev.includes(studentId)
-        ? prev.filter((id) => id !== studentId)
-        : [...prev, studentId]
+  const handleClientToggle = (clientId) => {
+    setSelectedClients((prev) =>
+      prev.includes(clientId)
+        ? prev.filter((id) => id !== clientId)
+        : [...prev, clientId]
     );
   };
 
@@ -71,8 +71,8 @@ const Dailies = () => {
   };
 
   const handleSaveDailies = async () => {
-    if (selectedStudents.length === 0) {
-      alert("Please select at least one student to save dailies to.");
+    if (selectedClients.length === 0) {
+      alert("Please select at least one client to save dailies to.");
       return;
     }
 
@@ -92,12 +92,12 @@ const Dailies = () => {
       const teacher = teacherData ? JSON.parse(teacherData) : null;
       const teacherId = teacher?.id || null;
 
-      // Create dailies for each selected student and each selected category
+      // Create dailies for each selected client and each selected category
       const dailyPromises = [];
-      selectedStudents.forEach((studentId) => {
+      selectedClients.forEach((clientId) => {
         selectedCategories.forEach((category) => {
           dailyPromises.push(
-            createDaily(studentId, {
+            createDaily(clientId, {
               teacher_id: teacherId,
               title: category,
               body: dailyText.trim(),
@@ -109,8 +109,8 @@ const Dailies = () => {
       await Promise.all(dailyPromises);
 
       console.log(
-        "Dailies saved to students:",
-        selectedStudents,
+        "Dailies saved to clients:",
+        selectedClients,
         "Notes:",
         dailyText,
         "Categories:",
@@ -119,7 +119,7 @@ const Dailies = () => {
 
       // Save data for modal before resetting
       setSavedData({
-        studentCount: selectedStudents.length,
+        clientCount: selectedClients.length,
         categories: selectedCategories,
       });
 
@@ -128,7 +128,7 @@ const Dailies = () => {
 
       // Reset after saving
       setDailyText("");
-      setSelectedStudents([]);
+      setSelectedClients([]);
       setSelectedCategories([]);
     } catch (err) {
       console.error("Error saving dailies:", err);
@@ -138,7 +138,7 @@ const Dailies = () => {
 
   const handleClearDailies = () => {
     setDailyText("");
-    setSelectedStudents([]);
+    setSelectedClients([]);
     setSelectedCategories([]);
   };
 
@@ -170,7 +170,7 @@ const Dailies = () => {
 
             <button
               className="flex items-center px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-              onClick={() => navigate("/students")}
+              onClick={() => navigate("/clients")}
             >
               <svg
                 className="w-4 h-4 mr-1.5"
@@ -185,7 +185,7 @@ const Dailies = () => {
                   d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
                 />
               </svg>
-              <span className="font-medium">View Students</span>
+              <span className="font-medium">View Clients</span>
             </button>
           </div>
           <h2 className="text-4xl font-bold text-gray-900 text-center">
@@ -240,10 +240,10 @@ const Dailies = () => {
               />
             </div>
 
-            {/* Student Selection Section */}
+            {/* Client Selection Section */}
             <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
               <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                Select Students ({selectedStudents.length} selected)
+                Select Clients ({selectedClients.length} selected)
               </h3>
               {error && (
                 <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
@@ -252,36 +252,36 @@ const Dailies = () => {
               )}
               {loading ? (
                 <div className="text-center py-8">
-                  <p className="text-gray-600">Loading students...</p>
+                  <p className="text-gray-600">Loading clients...</p>
                 </div>
-              ) : students.length === 0 ? (
+              ) : clients.length === 0 ? (
                 <div className="text-center py-8">
-                  <p className="text-gray-600">No students found.</p>
+                  <p className="text-gray-600">No clients found.</p>
                   <p className="text-gray-500 text-sm mt-2">
-                    Create a student first.
+                    Create a client first.
                   </p>
                 </div>
               ) : (
                 <div className="space-y-3 max-h-80 overflow-y-auto">
-                  {students.map((student) => (
+                  {clients.map((client) => (
                     <div
-                      key={student.id}
+                      key={client.id}
                       className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                     >
                       <input
                         type="checkbox"
-                        id={`student-${student.id}`}
-                        checked={selectedStudents.includes(student.id)}
-                        onChange={() => handleStudentToggle(student.id)}
+                        id={`client-${client.id}`}
+                        checked={selectedClients.includes(client.id)}
+                        onChange={() => handleClientToggle(client.id)}
                         className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                       />
                       <label
-                        htmlFor={`student-${student.id}`}
+                        htmlFor={`client-${client.id}`}
                         className="ml-3 flex-1 cursor-pointer"
                       >
                         <p className="text-sm font-medium text-gray-900">
-                          {student.first_name} {student.middle_name}{" "}
-                          {student.last_name}
+                          {client.first_name} {client.middle_name}{" "}
+                          {client.last_name}
                         </p>
                       </label>
                     </div>
@@ -293,7 +293,7 @@ const Dailies = () => {
                   onClick={handleSaveDailies}
                   className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                 >
-                  Save Dailies to Selected Students
+                  Save Dailies to Selected Clients
                 </button>
                 <button
                   onClick={handleClearDailies}
@@ -312,7 +312,7 @@ const Dailies = () => {
         isOpen={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}
         title="Dailies Saved Successfully!"
-        studentCount={savedData.studentCount}
+        clientCount={savedData.clientCount}
         categories={savedData.categories}
       />
     </div>

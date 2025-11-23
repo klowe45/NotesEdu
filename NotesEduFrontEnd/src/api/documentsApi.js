@@ -1,8 +1,8 @@
 const API_URL = "http://localhost:4000/api/documents";
 
-export const uploadDocuments = async (studentId, files, author) => {
+export const uploadDocuments = async (clientId, files, author) => {
   const formData = new FormData();
-  formData.append("studentId", studentId);
+  formData.append("clientId", clientId);
   formData.append("author", author);
 
   // Append all files to FormData
@@ -23,8 +23,8 @@ export const uploadDocuments = async (studentId, files, author) => {
   return response.json();
 };
 
-export const getStudentDocuments = async (studentId) => {
-  const response = await fetch(`${API_URL}/student/${studentId}`);
+export const getClientDocuments = async (clientId) => {
+  const response = await fetch(`${API_URL}/client/${clientId}`);
 
   if (!response.ok) {
     throw new Error("Failed to fetch documents");

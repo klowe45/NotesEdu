@@ -1,13 +1,13 @@
 const API_URL = "http://localhost:4000/api/dailies";
 
-export const createDaily = async (studentId, dailyData) => {
+export const createDaily = async (clientId, dailyData) => {
   const response = await fetch(`${API_URL}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      student_id: studentId,
+      client_id: clientId,
       ...dailyData,
     }),
   });
@@ -19,11 +19,11 @@ export const createDaily = async (studentId, dailyData) => {
   return response.json();
 };
 
-export const getStudentDailies = async (studentId) => {
-  const response = await fetch(`${API_URL}/student/${studentId}`);
+export const getClientDailies = async (clientId) => {
+  const response = await fetch(`${API_URL}/client/${clientId}`);
 
   if (!response.ok) {
-    throw new Error("Failed to fetch student dailies");
+    throw new Error("Failed to fetch client dailies");
   }
 
   return response.json();

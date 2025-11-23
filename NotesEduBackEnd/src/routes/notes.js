@@ -6,10 +6,10 @@ router.get("/", async (_req, res, next) => {
   try {
     const { rows } = await pool.query(
       `select n.id, n.title, n.body, n.created_at,
-              s.first_name as student_first, s.last_name as student_last,
+              c.first_name as client_first, c.last_name as client_last,
               t.first_name as teacher_first, t.last_name as teacher_last
        from notes n
-       join students s on s.id = n.student_id
+       join clients c on c.id = n.client_id
        left join teachers t on t.id = n.teacher_id
        order by n.created_at desc`
     );

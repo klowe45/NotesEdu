@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS students (
+CREATE TABLE IF NOT EXISTS clients (
   id SERIAL PRIMARY KEY,
   first_name VARCHAR(100) NOT NULL,
   middle_name VARCHAR(100),
@@ -17,27 +17,27 @@ CREATE TABLE IF NOT EXISTS teachers (
 
 CREATE TABLE IF NOT EXISTS notes (
   id SERIAL PRIMARY KEY,
-  student_id INT NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+  client_id INT NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
   teacher_id INT REFERENCES teachers(id) ON DELETE SET NULL,
   title VARCHAR(150) NOT NULL,
   body TEXT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX IF NOT EXISTS idx_notes_student_id ON notes(student_id);
+CREATE INDEX IF NOT EXISTS idx_notes_client_id ON notes(client_id);
 CREATE INDEX IF NOT EXISTS idx_notes_teacher_id ON notes(teacher_id);
 CREATE INDEX IF NOT EXISTS idx_notes_created_at ON notes(created_at);
 
 CREATE TABLE IF NOT EXISTS dailies (
   id SERIAL PRIMARY KEY,
-  student_id INT NOT NULL REFERENCES students(id) ON DELETE CASCADE,
+  client_id INT NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
   teacher_id INT REFERENCES teachers(id) ON DELETE SET NULL,
   title VARCHAR(150) NOT NULL,
   body TEXT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX IF NOT EXISTS idx_dailies_student_id ON dailies(student_id);
+CREATE INDEX IF NOT EXISTS idx_dailies_client_id ON dailies(client_id);
 CREATE INDEX IF NOT EXISTS idx_dailies_teacher_id ON dailies(teacher_id);
 CREATE INDEX IF NOT EXISTS idx_dailies_created_at ON dailies(created_at);
 

@@ -1,7 +1,7 @@
 {
-  "name": "notesedu-backend",
+  "name": "neuronotes-backend",
   "version": "1.0.0",
-  "description": "Backend API for NotesEdu application (Express + PostgreSQL)",
+  "description": "Backend API for NeuroNotes application (Express + PostgreSQL)",
   "main": "src/index.js",
   "type": "module",
   "scripts": {
@@ -10,7 +10,7 @@
     "test": "jest"
   },
   "keywords": [
-    "notesedu",
+    "neuronotes",
     "backend",
     "api",
     "express",

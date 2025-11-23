@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllStudents } from "../../api/studentsApi";
+import { getAllClients } from "../../api/clientsApi";
 import { getAllAttendance } from "../../api/attendanceApi";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
@@ -8,22 +8,22 @@ import "./AttendanceHistory.css";
 
 const AttendanceHistory = () => {
   const navigate = useNavigate();
-  const [students, setStudents] = useState([]);
+  const [clients, setClients] = useState([]);
   const [attendanceRecords, setAttendanceRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [expandedStudent, setExpandedStudent] = useState(null);
+  const [expandedClient, setExpandedClient] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const [studentsData, attendanceData] = await Promise.all([
-          getAllStudents(),
+        const [clientsData, attendanceData] = await Promise.all([
+          getAllClients(),
           getAllAttendance()
         ]);
-        setStudents(studentsData);
+        setClients(clientsData);
         setAttendanceRecords(attendanceData);
       } catch (err) {
         console.error("Error fetching data:", err);
@@ -40,8 +40,8 @@ const AttendanceHistory = () => {
     navigate("/attendance");
   };
 
-  const toggleStudent = (studentId) => {
-    setExpandedStudent(expandedStudent === studentId ? null : studentId);
+  const toggleClient = (clientId) => {
+    setExpandedClient(expandedClient === clientId ? null : clientId);
   };
 
   const formatDate = (dateString) => {
@@ -57,7 +57,7 @@ const AttendanceHistory = () => {
     setSelectedDate(date);
   };
 
-  const getStudentsPresentOnDate = () => {
+  const getClientsPresentOnDate = () => {
     if (!selectedDate) return [];
 
     const selectedDateStr = selectedDate.toISOString().split('T')[0];
@@ -68,7 +68,7 @@ const AttendanceHistory = () => {
     });
   };
 
-  const studentsPresent = getStudentsPresentOnDate();
+  const clientsPresent = getClientsPresentOnDate();
 
   return (
     <div className="p-4 pb-20">
@@ -117,17 +117,17 @@ const AttendanceHistory = () => {
               />
             </div>
 
-            {/* Students Present on Selected Date */}
+            {/* Clients Present on Selected Date */}
             <div className="bg-white rounded-lg shadow-md border border-gray-200 p-6">
               <h4 className="text-lg font-semibold text-gray-800 mb-4">
-                Students Present on {formatDate(selectedDate)}
+                Clients Present on {formatDate(selectedDate)}
               </h4>
 
-              {studentsPresent.length === 0 ? (
-                <p className="text-gray-500 italic text-sm">No students were marked present on this date.</p>
+              {clientsPresent.length === 0 ? (
+                <p className="text-gray-500 italic text-sm">No clients were marked present on this date.</p>
               ) : (
                 <div className="space-y-2">
-                  {studentsPresent.map((record) => (
+                  {clientsPresent.map((record) => (
                     <div
                       key={record.id}
                       className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-center justify-between"
@@ -149,7 +149,7 @@ const AttendanceHistory = () => {
         {/* Attendance History Table */}
         <div className="max-w-6xl mx-auto">
           <h3 className="text-2xl font-bold text-gray-900 text-center mb-6">
-            All Students
+            All Clients
           </h3>
           {error && (
             <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -161,11 +161,11 @@ const AttendanceHistory = () => {
             <div className="text-center py-12">
               <p className="text-gray-600 text-lg">Loading attendance history...</p>
             </div>
-          ) : students.length === 0 ? (
+          ) : clients.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-600 text-lg">No students found.</p>
+              <p className="text-gray-600 text-lg">No clients found.</p>
               <p className="text-gray-500 text-sm mt-2">
-                Create a new student to get started.
+                Create a new client to get started.
               </p>
             </div>
           ) : (
@@ -174,7 +174,7 @@ const AttendanceHistory = () => {
                 <thead className="bg-gray-50 border-b border-gray-200">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Student Name
+                      Client Name
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Total Records
@@ -182,20 +182,20 @@ const AttendanceHistory = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {students.map((student) => {
-                    const studentRecords = attendanceRecords.filter(
+                  {clients.map((client) => {
+                    const clientRecords = attendanceRecords.filter(
                       record =>
-                        record.first_name === student.first_name &&
-                        record.last_name === student.last_name
+                        record.first_name === client.first_name &&
+                        record.last_name === client.last_name
                     );
-                    const totalRecords = studentRecords.length;
-                    const isExpanded = expandedStudent === student.id;
+                    const totalRecords = clientRecords.length;
+                    const isExpanded = expandedClient === client.id;
 
                     return (
                       <>
                         <tr
-                          key={student.id}
-                          onClick={() => toggleStudent(student.id)}
+                          key={client.id}
+                          onClick={() => toggleClient(client.id)}
                           className="hover:bg-gray-50 cursor-pointer"
                         >
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -215,7 +215,7 @@ const AttendanceHistory = () => {
                                   d="M9 5l7 7-7 7"
                                 />
                               </svg>
-                              {student.first_name} {student.middle_name} {student.last_name}
+                              {client.first_name} {client.middle_name} {client.last_name}
                             </div>
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -223,15 +223,15 @@ const AttendanceHistory = () => {
                           </td>
                         </tr>
                         {isExpanded && (
-                          <tr key={`${student.id}-details`}>
+                          <tr key={`${client.id}-details`}>
                             <td colSpan="2" className="px-6 py-4 bg-gray-50">
-                              {studentRecords.length === 0 ? (
+                              {clientRecords.length === 0 ? (
                                 <p className="text-sm text-gray-500 italic">No attendance records found</p>
                               ) : (
                                 <div className="space-y-2">
                                   <h4 className="font-medium text-sm text-gray-700 mb-3">Attendance Records:</h4>
                                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                                    {studentRecords.map((record) => (
+                                    {clientRecords.map((record) => (
                                       <div
                                         key={record.id}
                                         className="bg-white p-3 rounded border border-gray-200 flex justify-between items-center"

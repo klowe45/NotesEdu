@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { getStudentById } from "../../api/studentsApi";
-import { uploadDocuments, getStudentDocuments, sendDocumentByEmail } from "../../api/documentsApi";
+import { getClientById } from "../../api/clientsApi";
+import { uploadDocuments, getClientDocuments, sendDocumentByEmail } from "../../api/documentsApi";
 
 const UploadReports = () => {
   const navigate = useNavigate();
-  const { studentId } = useParams();
-  const [student, setStudent] = useState(null);
+  const { clientId } = useParams();
+  const [client, setClient] = useState(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [success, setSuccess] = useState("");
@@ -27,7 +27,7 @@ const UploadReports = () => {
   const fetchDocuments = async () => {
     try {
       setLoadingDocuments(true);
-      const docs = await getStudentDocuments(studentId);
+      const docs = await getClientDocuments(clientId);
       setDocuments(docs);
     } catch (err) {
       console.error("Error fetching documents:", err);
@@ -37,21 +37,21 @@ const UploadReports = () => {
   };
 
   useEffect(() => {
-    const fetchStudent = async () => {
+    const fetchClient = async () => {
       try {
-        const studentData = await getStudentById(studentId);
-        setStudent(studentData);
+        const clientData = await getClientById(clientId);
+        setClient(clientData);
       } catch (err) {
-        console.error("Error fetching student:", err);
-        setError("Failed to load student data.");
+        console.error("Error fetching client:", err);
+        setError("Failed to load client data.");
       }
     };
 
-    if (studentId) {
-      fetchStudent();
+    if (clientId) {
+      fetchClient();
       fetchDocuments();
     }
-  }, [studentId]);
+  }, [clientId]);
 
   const handleReturn = () => {
     navigate("/behavioral-reports");
@@ -97,7 +97,7 @@ const UploadReports = () => {
       const author = teacher ? `${teacher.first_name} ${teacher.last_name}` : "Unknown";
 
       // Upload documents to server
-      await uploadDocuments(studentId, selectedFiles, author);
+      await uploadDocuments(clientId, selectedFiles, author);
 
       setSuccess(`Successfully uploaded ${selectedFiles.length} file(s)!`);
       setSelectedFiles([]);
@@ -223,7 +223,7 @@ const UploadReports = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `NotesEdu-${selectedDocument.filename}.eml`;
+      link.download = `NeuroNotes-${selectedDocument.filename}.eml`;
 
       // Trigger download
       document.body.appendChild(link);
@@ -285,9 +285,9 @@ const UploadReports = () => {
           <h2 className="text-4xl font-bold text-gray-900 text-center">
             Upload Reports
           </h2>
-          {student && (
+          {client && (
             <p className="text-center text-gray-600 text-lg mt-2">
-              for {student.first_name} {student.middle_name} {student.last_name}
+              for {client.first_name} {client.middle_name} {client.last_name}
             </p>
           )}
         </div>

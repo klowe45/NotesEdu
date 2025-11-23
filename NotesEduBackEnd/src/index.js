@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { assertDb } from "./db.js";
-import students from "./routes/students.js";
+import clients from "./routes/clients.js";
 import teachers from "./routes/teachers.js";
 import notes from "./routes/notes.js";
 import auth from "./routes/auth.js";
@@ -14,7 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/auth", auth);
-app.use("/api/students", students);
+app.use("/api/clients", clients);
 app.use("/api/teachers", teachers);
 app.use("/api/notes", notes);
 app.use("/api/attendance", attendance);

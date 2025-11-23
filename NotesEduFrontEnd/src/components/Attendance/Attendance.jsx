@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAllStudents } from "../../api/studentsApi";
+import { getAllClients } from "../../api/clientsApi";
 import { submitAttendance, getAllAttendance } from "../../api/attendanceApi";
 
 const Attendance = () => {
   const navigate = useNavigate();
-  const [students, setStudents] = useState([]);
+  const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -13,15 +13,15 @@ const Attendance = () => {
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    const fetchStudents = async () => {
+    const fetchClients = async () => {
       try {
         setLoading(true);
-        const [studentsData, attendanceRecords] = await Promise.all([
-          getAllStudents(),
+        const [clientsData, attendanceRecords] = await Promise.all([
+          getAllClients(),
           getAllAttendance()
         ]);
 
-        setStudents(studentsData);
+        setClients(clientsData);
 
         // Get today's date in YYYY-MM-DD format
         const today = new Date().toISOString().split('T')[0];
@@ -34,33 +34,33 @@ const Attendance = () => {
 
         // Initialize attendance state
         const initialAttendance = {};
-        studentsData.forEach(student => {
-          // Check if this student has attendance marked for today
+        clientsData.forEach(client => {
+          // Check if this client has attendance marked for today
           const existingRecord = todayAttendance.find(record =>
-            record.first_name === student.first_name &&
-            record.last_name === student.last_name
+            record.first_name === client.first_name &&
+            record.last_name === client.last_name
           );
 
           // If they have a record and appeared is true, mark them as checked
-          initialAttendance[student.id] = existingRecord ? existingRecord.appeared : false;
+          initialAttendance[client.id] = existingRecord ? existingRecord.appeared : false;
         });
 
         setAttendance(initialAttendance);
       } catch (err) {
-        console.error("Error fetching students:", err);
-        setError("Failed to load students. Please try again.");
+        console.error("Error fetching clients:", err);
+        setError("Failed to load clients. Please try again.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchStudents();
+    fetchClients();
   }, []);
 
-  const handleCheckboxChange = (studentId) => {
+  const handleCheckboxChange = (clientId) => {
     setAttendance(prev => ({
       ...prev,
-      [studentId]: !prev[studentId]
+      [clientId]: !prev[clientId]
     }));
   };
 
@@ -79,7 +79,7 @@ const Attendance = () => {
         }));
 
       if (attendanceData.length === 0) {
-        setError("Please select at least one student");
+        setError("Please select at least one client");
         setSubmitting(false);
         return;
       }
@@ -90,8 +90,8 @@ const Attendance = () => {
       // Reset attendance after successful submission
       setTimeout(() => {
         const resetAttendance = {};
-        students.forEach(student => {
-          resetAttendance[student.id] = false;
+        clients.forEach(client => {
+          resetAttendance[client.id] = false;
         });
         setAttendance(resetAttendance);
         setSuccess("");
@@ -173,34 +173,34 @@ const Attendance = () => {
 
           {loading ? (
             <div className="text-center py-12">
-              <p className="text-gray-600 text-lg">Loading students...</p>
+              <p className="text-gray-600 text-lg">Loading clients...</p>
             </div>
-          ) : students.length === 0 ? (
+          ) : clients.length === 0 ? (
             <div className="text-center py-12">
-              <p className="text-gray-600 text-lg">No students found.</p>
+              <p className="text-gray-600 text-lg">No clients found.</p>
               <p className="text-gray-500 text-sm mt-2">
-                Create a new student to get started.
+                Create a new client to get started.
               </p>
             </div>
           ) : (
             <div className="space-y-3">
-              {students.map((student) => (
+              {clients.map((client) => (
                 <div
-                  key={student.id}
+                  key={client.id}
                   className="flex items-center p-4 bg-white rounded-lg shadow-md border border-gray-200 hover:bg-gray-50"
                 >
                   <input
                     type="checkbox"
-                    id={`student-${student.id}`}
-                    checked={attendance[student.id] || false}
-                    onChange={() => handleCheckboxChange(student.id)}
+                    id={`client-${client.id}`}
+                    checked={attendance[client.id] || false}
+                    onChange={() => handleCheckboxChange(client.id)}
                     className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
                   />
                   <label
-                    htmlFor={`student-${student.id}`}
+                    htmlFor={`client-${client.id}`}
                     className="ml-4 text-lg text-gray-800 cursor-pointer flex-1"
                   >
-                    {student.first_name} {student.middle_name} {student.last_name}
+                    {client.first_name} {client.middle_name} {client.last_name}
                   </label>
                 </div>
               ))}

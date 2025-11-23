@@ -65,27 +65,27 @@ const upload = multer({
 // Upload document(s)
 router.post("/upload", upload.array("files", 10), async (req, res, next) => {
   try {
-    const { studentId, author } = req.body;
+    const { clientId, author } = req.body;
 
-    if (!studentId) {
-      return res.status(400).json({ error: "Student ID is required" });
+    if (!clientId) {
+      return res.status(400).json({ error: "Client ID is required" });
     }
 
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ error: "No files uploaded" });
     }
 
-    // Get student information
-    const studentResult = await pool.query(
-      "SELECT first_name, last_name FROM students WHERE id = $1",
-      [studentId]
+    // Get client information
+    const clientResult = await pool.query(
+      "SELECT first_name, last_name FROM clients WHERE id = $1",
+      [clientId]
     );
 
-    if (studentResult.rows.length === 0) {
-      return res.status(404).json({ error: "Student not found" });
+    if (clientResult.rows.length === 0) {
+      return res.status(404).json({ error: "Client not found" });
     }
 
-    const { first_name, last_name } = studentResult.rows[0];
+    const { first_name, last_name } = clientResult.rows[0];
 
     // Insert document records into database
     const insertPromises = req.files.map((file) => {
@@ -124,24 +124,24 @@ router.post("/upload", upload.array("files", 10), async (req, res, next) => {
   }
 });
 
-// Get documents for a student
-router.get("/student/:studentId", async (req, res, next) => {
+// Get documents for a client
+router.get("/client/:clientId", async (req, res, next) => {
   try {
-    const { studentId } = req.params;
+    const { clientId } = req.params;
 
-    // Get student information
-    const studentResult = await pool.query(
-      "SELECT first_name, last_name FROM students WHERE id = $1",
-      [studentId]
+    // Get client information
+    const clientResult = await pool.query(
+      "SELECT first_name, last_name FROM clients WHERE id = $1",
+      [clientId]
     );
 
-    if (studentResult.rows.length === 0) {
-      return res.status(404).json({ error: "Student not found" });
+    if (clientResult.rows.length === 0) {
+      return res.status(404).json({ error: "Client not found" });
     }
 
-    const { first_name, last_name } = studentResult.rows[0];
+    const { first_name, last_name } = clientResult.rows[0];
 
-    // Get documents for this student
+    // Get documents for this client
     const { rows } = await pool.query(
       `SELECT id, first_name, last_name, date, filename, file_type, author, file_path
        FROM documents
@@ -256,16 +256,16 @@ router.post("/generate-email", async (req, res, next) => {
     // Build email body text
     const emailBodyText = `Hello ${recipientName || "there"},
 
-${senderName || "A teacher"} has shared a document with you from NotesEdu.
+${senderName || "A teacher"} has shared a document with you from NeuroNotes.
 
-Student: ${document.first_name} ${document.last_name}
+Client: ${document.first_name} ${document.last_name}
 Document: ${document.filename}
 Type: ${document.file_type.toUpperCase().replace('.', '')}
 
 ${message ? `Message:\n${message}\n\n` : ''}Please find the document attached to this email.
 
 ---
-This is an automated message from NotesEdu. Please do not reply to this email.`;
+This is an automated message from NeuroNotes. Please do not reply to this email.`;
 
     // Build .eml file content
     const emlContent = `To: ${recipientEmail || ''}
@@ -290,7 +290,7 @@ ${base64Content}
 
     // Send the .eml file as a download
     res.setHeader('Content-Type', 'message/rfc822');
-    res.setHeader('Content-Disposition', `attachment; filename="NotesEdu-${document.filename}.eml"`);
+    res.setHeader('Content-Disposition', `attachment; filename="NeuroNotes-${document.filename}.eml"`);
     res.send(emlContent);
 
     console.log(`✅ Generated .eml file for document: ${document.filename}`);

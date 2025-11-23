@@ -1,17 +1,17 @@
 const API = "http://localhost:4000/api";
 
-export async function getClients() {
+export async function getAllClients() {
   const r = await fetch(`${API}/clients`);
   return r.json();
 }
 
-export async function getClientNotes(id) {
-  const r = await fetch(`${API}/clients/${id}/notes`);
+export async function getClientById(id) {
+  const r = await fetch(`${API}/clients/${id}`);
   return r.json();
 }
 
-export async function createNote(clientId, payload) {
-  const r = await fetch(`${API}/clients/${clientId}/notes`, {
+export async function createClient(payload) {
+  const r = await fetch(`${API}/clients`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),

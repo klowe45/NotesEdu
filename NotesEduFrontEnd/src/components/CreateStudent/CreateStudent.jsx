@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import FormSample from "../FormSample/FormSample";
-import { createStudent } from "../../api/studentsApi";
+import { createClient } from "../../api/clientsApi";
 
 const CreateStudent = () => {
   const navigate = useNavigate();
@@ -29,20 +29,20 @@ const CreateStudent = () => {
     setIsSubmitting(true);
 
     try {
-      const studentData = {
+      const clientData = {
         first_name: firstName.trim(),
         middle_name: middleName.trim() || null,
         last_name: lastName.trim(),
       };
 
-      const result = await createStudent(studentData);
-      console.log("Student created:", result);
+      const result = await createClient(clientData);
+      console.log("Client created:", result);
 
-      navigate("/students");
+      navigate("/clients");
     } catch (error) {
-      console.error("Error creating student:", error);
+      console.error("Error creating client:", error);
       setError(
-        error.message || "Failed to create student. Please check your connection and try again."
+        error.message || "Failed to create client. Please check your connection and try again."
       );
     } finally {
       setIsSubmitting(false);
@@ -80,10 +80,10 @@ const CreateStudent = () => {
         </div>
         <div className="text-center">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Create New Student
+            Create New Client
           </h1>
           <p className="text-lg text-gray-600">
-            Add a new student to your dashboard
+            Add a new client to your dashboard
           </p>
         </div>
       </div>
@@ -96,8 +96,8 @@ const CreateStudent = () => {
           </div>
         )}
         <FormSample
-          title="Student Information"
-          submitText={isSubmitting ? "Creating..." : "Create Student"}
+          title="Client Information"
+          submitText={isSubmitting ? "Creating..." : "Create Client"}
           onSubmit={handleSubmit}
         >
           <div className="space-y-4">
