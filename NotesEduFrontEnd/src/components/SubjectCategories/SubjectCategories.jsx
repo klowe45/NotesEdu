@@ -4,12 +4,14 @@ import { useNavigate } from "react-router-dom";
 const SubjectCategories = () => {
   const navigate = useNavigate();
   const [categories] = useState([
-    "Reading",
-    "Writing",
-    "Math",
-    "Art",
-    "Music",
-    "Physical Education",
+    "Money Management",
+    "Meal Prep",
+    "Medocation Management",
+    "Housekeeping",
+    "Shopping",
+    "transportation",
+    "Communication",
+    "Health Management",
   ]);
 
   const handleReturn = () => {

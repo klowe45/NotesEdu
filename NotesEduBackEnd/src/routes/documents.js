@@ -220,13 +220,13 @@ function getContentType(fileType) {
   return contentTypes[fileType.toLowerCase()] || "application/octet-stream";
 }
 
-// Send document via email
-router.post("/send-email", async (req, res, next) => {
+// Generate .eml file for user's email client
+router.post("/generate-email", async (req, res, next) => {
   try {
     const { documentId, recipientEmail, recipientName, message, senderName } = req.body;
 
-    if (!documentId || !recipientEmail) {
-      return res.status(400).json({ error: "Document ID and recipient email are required" });
+    if (!documentId) {
+      return res.status(400).json({ error: "Document ID is required" });
     }
 
     // Get document information from database
@@ -246,98 +246,56 @@ router.post("/send-email", async (req, res, next) => {
       return res.status(404).json({ error: "File not found on server" });
     }
 
-    // Create transporter based on environment
-    let transporter;
+    // Read the file and encode as base64
+    const fileContent = fs.readFileSync(document.file_path);
+    const base64Content = fileContent.toString('base64');
 
-    if (process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS) {
-      // Use real SMTP credentials if provided
-      transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: process.env.SMTP_PORT || 587,
-        secure: process.env.SMTP_SECURE === 'true',
-        auth: {
-          user: process.env.SMTP_USER,
-          pass: process.env.SMTP_PASS,
-        },
-      });
-    } else {
-      // Generate test account for development/testing
-      try {
-        console.log("📧 Creating test email account...");
-        const testAccount = await Promise.race([
-          nodemailer.createTestAccount(),
-          new Promise((_, reject) =>
-            setTimeout(() => reject(new Error("Timeout creating test account")), 10000)
-          )
-        ]);
-        transporter = nodemailer.createTransport({
-          host: "smtp.ethereal.email",
-          port: 587,
-          secure: false,
-          auth: {
-            user: testAccount.user,
-            pass: testAccount.pass,
-          },
-        });
-        console.log("✅ Test email account created:", testAccount.user);
-      } catch (testAccountError) {
-        console.error("⚠️ Failed to create test account:", testAccountError.message);
-        return res.status(503).json({
-          error: "Email service temporarily unavailable. Please try again or configure SMTP credentials in .env file."
-        });
-      }
-    }
+    // Generate boundary for MIME multipart
+    const boundary = `----=_Part_${Date.now()}_${Math.random().toString(36).substring(7)}`;
 
-    // Send email with attachment
-    const info = await transporter.sendMail({
-      from: process.env.EMAIL_FROM || '"NotesEdu System" <noreply@notesedu.com>',
-      to: recipientEmail,
-      subject: `Document: ${document.filename}`,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #2563eb;">Document Shared with You</h2>
-          <p>Hello ${recipientName || "there"},</p>
-          <p>${senderName || "A teacher"} has shared a document with you from NotesEdu.</p>
+    // Build email body text
+    const emailBodyText = `Hello ${recipientName || "there"},
 
-          <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <p style="margin: 5px 0;"><strong>Student:</strong> ${document.first_name} ${document.last_name}</p>
-            <p style="margin: 5px 0;"><strong>Document:</strong> ${document.filename}</p>
-            <p style="margin: 5px 0;"><strong>Type:</strong> ${document.file_type.toUpperCase().replace('.', '')}</p>
-          </div>
+${senderName || "A teacher"} has shared a document with you from NotesEdu.
 
-          ${message ? `<p><strong>Message:</strong></p><p style="padding: 10px; background-color: #f9fafb; border-left: 4px solid #2563eb;">${message}</p>` : ''}
+Student: ${document.first_name} ${document.last_name}
+Document: ${document.filename}
+Type: ${document.file_type.toUpperCase().replace('.', '')}
 
-          <p>Please find the document attached to this email.</p>
+${message ? `Message:\n${message}\n\n` : ''}Please find the document attached to this email.
 
-          <hr style="margin: 30px 0; border: none; border-top: 1px solid #e5e7eb;">
-          <p style="color: #6b7280; font-size: 12px;">This is an automated message from NotesEdu. Please do not reply to this email.</p>
-        </div>
-      `,
-      attachments: [
-        {
-          filename: document.filename,
-          path: document.file_path,
-          contentType: getContentType(document.file_type),
-        },
-      ],
-    });
+---
+This is an automated message from NotesEdu. Please do not reply to this email.`;
 
-    console.log("✅ Email sent successfully! Message ID: %s", info.messageId);
+    // Build .eml file content
+    const emlContent = `To: ${recipientEmail || ''}
+Subject: Document: ${document.filename}
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="${boundary}"
 
-    // Generate preview URL for test emails
-    const previewUrl = nodemailer.getTestMessageUrl(info);
-    if (previewUrl) {
-      console.log("📧 View email preview at: %s", previewUrl);
-    }
+--${boundary}
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-    res.json({
-      message: "Email sent successfully",
-      messageId: info.messageId,
-      previewUrl: previewUrl, // URL to view test email in browser
-      isTestEmail: !process.env.SMTP_HOST
-    });
+${emailBodyText}
+
+--${boundary}
+Content-Type: ${getContentType(document.file_type)}
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="${document.filename}"
+
+${base64Content}
+
+--${boundary}--`;
+
+    // Send the .eml file as a download
+    res.setHeader('Content-Type', 'message/rfc822');
+    res.setHeader('Content-Disposition', `attachment; filename="NotesEdu-${document.filename}.eml"`);
+    res.send(emlContent);
+
+    console.log(`✅ Generated .eml file for document: ${document.filename}`);
   } catch (e) {
-    console.error("Email error:", e);
+    console.error("Email generation error:", e);
     next(e);
   }
 });

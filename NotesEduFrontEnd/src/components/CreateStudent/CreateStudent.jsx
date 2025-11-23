@@ -8,7 +8,6 @@ const CreateStudent = () => {
   const [firstName, setFirstName] = useState("");
   const [middleName, setMiddleName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [grade, setGrade] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -27,16 +26,6 @@ const CreateStudent = () => {
       return;
     }
 
-    // Grade is optional, but if provided must be valid
-    let gradeNum = null;
-    if (grade.trim()) {
-      gradeNum = parseInt(grade);
-      if (isNaN(gradeNum) || gradeNum < 1 || gradeNum > 12) {
-        setError("Grade must be a number between 1 and 12");
-        return;
-      }
-    }
-
     setIsSubmitting(true);
 
     try {
@@ -44,7 +33,6 @@ const CreateStudent = () => {
         first_name: firstName.trim(),
         middle_name: middleName.trim() || null,
         last_name: lastName.trim(),
-        grade: gradeNum,
       };
 
       const result = await createStudent(studentData);
@@ -165,25 +153,6 @@ const CreateStudent = () => {
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
                 placeholder="Enter last name"
                 required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label
-                htmlFor="grade"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Grade (Optional)
-              </label>
-              <input
-                id="grade"
-                type="number"
-                min="1"
-                max="12"
-                value={grade}
-                onChange={(e) => setGrade(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-                placeholder="Enter grade (1-12, optional)"
               />
             </div>
           </div>

@@ -12,6 +12,7 @@ import Attendance from "./components/Attendance/Attendance";
 import AttendanceHistory from "./components/AttendanceHistory/AttendanceHistory";
 import BehavioralReports from "./components/BehavioralReports/BehavioralReports";
 import UploadReports from "./components/UploadReports/UploadReports";
+import Dailies from "./components/Dailies/Dailies";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -38,6 +39,7 @@ function App() {
           <Route path="attendance-history" element={<AttendanceHistory />}></Route>
           <Route path="behavioral-reports" element={<BehavioralReports />}></Route>
           <Route path="upload-reports/:studentId" element={<UploadReports />}></Route>
+          <Route path="dailies" element={<Dailies />}></Route>
           <Route
             path="student/:studentId"
             element={<StudentDashboard />}

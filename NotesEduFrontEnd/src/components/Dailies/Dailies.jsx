@@ -1,19 +1,22 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import SuccessModal from "../Modal/SuccessModal";
 import { getAllStudents } from "../../api/studentsApi";
-import { createNote } from "../../api/notesApi";
+import { createDaily } from "../../api/dailiesApi";
+import SuccessModal from "../Modal/SuccessModal";
 
-const Notes = () => {
+const Dailies = () => {
   const navigate = useNavigate();
-  const [notes, setNotes] = useState("");
-  const [selectedStudents, setSelectedStudents] = useState([]);
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [savedData, setSavedData] = useState({ studentCount: 0, categories: [] });
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [dailyText, setDailyText] = useState("");
+  const [selectedStudents, setSelectedStudents] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [savedData, setSavedData] = useState({
+    studentCount: 0,
+    categories: [],
+  });
 
   const categories = [
     "Money Management",
@@ -47,8 +50,8 @@ const Notes = () => {
     navigate("/");
   };
 
-  const handleNotesChange = (e) => {
-    setNotes(e.target.value);
+  const handleDailyTextChange = (e) => {
+    setDailyText(e.target.value);
   };
 
   const handleStudentToggle = (studentId) => {
@@ -67,19 +70,19 @@ const Notes = () => {
     );
   };
 
-  const handleSaveNotes = async () => {
+  const handleSaveDailies = async () => {
     if (selectedStudents.length === 0) {
-      alert("Please select at least one student to save notes to.");
+      alert("Please select at least one student to save dailies to.");
       return;
     }
 
     if (selectedCategories.length === 0) {
-      alert("Please select at least one category for the notes.");
+      alert("Please select at least one category for the dailies.");
       return;
     }
 
-    if (!notes.trim()) {
-      alert("Please enter some notes.");
+    if (!dailyText.trim()) {
+      alert("Please enter some daily.");
       return;
     }
 
@@ -89,27 +92,27 @@ const Notes = () => {
       const teacher = teacherData ? JSON.parse(teacherData) : null;
       const teacherId = teacher?.id || null;
 
-      // Create notes for each selected student and each selected category
-      const notePromises = [];
+      // Create dailies for each selected student and each selected category
+      const dailyPromises = [];
       selectedStudents.forEach((studentId) => {
         selectedCategories.forEach((category) => {
-          notePromises.push(
-            createNote(studentId, {
+          dailyPromises.push(
+            createDaily(studentId, {
               teacher_id: teacherId,
               title: category,
-              body: notes.trim(),
+              body: dailyText.trim(),
             })
           );
         });
       });
 
-      await Promise.all(notePromises);
+      await Promise.all(dailyPromises);
 
       console.log(
-        "Notes saved to students:",
+        "Dailies saved to students:",
         selectedStudents,
         "Notes:",
-        notes,
+        dailyText,
         "Categories:",
         selectedCategories
       );
@@ -124,17 +127,17 @@ const Notes = () => {
       setShowSuccessModal(true);
 
       // Reset after saving
-      setNotes("");
+      setDailyText("");
       setSelectedStudents([]);
       setSelectedCategories([]);
     } catch (err) {
-      console.error("Error saving notes:", err);
-      alert("Failed to save notes. Please try again.");
+      console.error("Error saving dailies:", err);
+      alert("Failed to save dailies. Please try again.");
     }
   };
 
-  const handleClearNotes = () => {
-    setNotes("");
+  const handleClearDailies = () => {
+    setDailyText("");
     setSelectedStudents([]);
     setSelectedCategories([]);
   };
@@ -186,17 +189,17 @@ const Notes = () => {
             </button>
           </div>
           <h2 className="text-4xl font-bold text-gray-900 text-center">
-            Add Notes
+            Add Dailies
           </h2>
         </div>
 
-        {/* Notes Content */}
+        {/* Dailies Content */}
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Notes Input Section */}
+            {/* Daily Notes Input Section */}
             <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
               <h3 className="text-xl font-semibold text-gray-800 mb-4">
-                Write Notes
+                Write Daily
               </h3>
 
               {/* Category Selection */}
@@ -229,11 +232,11 @@ const Notes = () => {
               </div>
 
               <textarea
-                value={notes}
-                onChange={handleNotesChange}
+                value={dailyText}
+                onChange={handleDailyTextChange}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-vertical"
                 rows={10}
-                placeholder="Type your notes here..."
+                placeholder="Type your daily notes here..."
               />
             </div>
 
@@ -287,13 +290,13 @@ const Notes = () => {
               )}
               <div className="flex gap-2 mt-4">
                 <button
-                  onClick={handleSaveNotes}
+                  onClick={handleSaveDailies}
                   className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                 >
-                  Save Notes to Selected Students
+                  Save Dailies to Selected Students
                 </button>
                 <button
-                  onClick={handleClearNotes}
+                  onClick={handleClearDailies}
                   className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
                 >
                   Clear All
@@ -308,7 +311,7 @@ const Notes = () => {
       <SuccessModal
         isOpen={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}
-        title="Notes Saved Successfully!"
+        title="Dailies Saved Successfully!"
         studentCount={savedData.studentCount}
         categories={savedData.categories}
       />
@@ -316,4 +319,4 @@ const Notes = () => {
   );
 };
 
-export default Notes;
+export default Dailies;

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-const SuccessModal = ({ isOpen, onClose, title, message, clientCount, studentCount, category }) => {
+const SuccessModal = ({ isOpen, onClose, title, message, clientCount, studentCount, category, categories }) => {
   useEffect(() => {
     if (isOpen) {
       // Auto-close modal after 3 seconds
@@ -40,13 +40,29 @@ const SuccessModal = ({ isOpen, onClose, title, message, clientCount, studentCou
             {message || `Notes saved to ${studentCount || clientCount} student(s) successfully!`}
           </p>
 
-          {category && (
+          {(categories && categories.length > 0) || category ? (
             <div className="mb-4">
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                Category: {category}
-              </span>
+              <p className="text-sm text-gray-600 mb-2">
+                {categories && categories.length > 1 ? "Categories:" : "Category:"}
+              </p>
+              <div className="flex flex-wrap gap-2 justify-center">
+                {categories && categories.length > 0 ? (
+                  categories.map((cat, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800"
+                    >
+                      {cat}
+                    </span>
+                  ))
+                ) : (
+                  <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                    {category}
+                  </span>
+                )}
+              </div>
             </div>
-          )}
+          ) : null}
 
           <div className="flex items-center justify-center gap-3">
             <button

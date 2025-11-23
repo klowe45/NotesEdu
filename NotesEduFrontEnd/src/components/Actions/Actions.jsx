@@ -23,19 +23,23 @@ const Actions = () => {
     navigate("behavioral-reports");
   };
 
+  const handleDailiesClick = () => {
+    navigate("dailies");
+  };
+
   return (
     <div className="grid grid-cols-2 gap-3 justify-center justify-items-center">
       <button
         className="bg-black text-white h-30 w-44 rounded hover:bg-gray-800 transition-colors cursor-pointer border-0 "
         onClick={handleCreateStudentClick}
       >
-        Create Student
+        Create Client
       </button>
       <button
         className="bg-black text-white h-30 w-44 rounded hover:bg-gray-800 transition-colors cursor-pointer border-0"
         onClick={handleStudentsClick}
       >
-        Students
+        Clients
       </button>
       <button
         className="bg-black text-white h-30 w-44 rounded hover:bg-gray-800 transition-colors cursor-pointer border-0"
@@ -54,6 +58,12 @@ const Actions = () => {
         onClick={handleReportsClick}
       >
         Reports
+      </button>
+      <button
+        className="bg-black text-white h-30 w-44 rounded hover:bg-gray-800 transition-colors cursor-pointer border-0"
+        onClick={handleDailiesClick}
+      >
+        Dailies
       </button>
     </div>
   );

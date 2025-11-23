@@ -89,7 +89,7 @@ const Header = ({ loggedIn, setLoggedIn }) => {
         </div>
       )}
 
-      <h1 className="text-black text-4xl font-bold m-0 ml-[10px]">NotesEdu</h1>
+      <h1 className="text-black text-xl font-bold m-0 ml-[10px]">NeuroNotes</h1>
     </header>
   );
 };

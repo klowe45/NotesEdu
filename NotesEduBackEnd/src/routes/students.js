@@ -5,7 +5,7 @@ const router = Router();
 router.get("/", async (_req, res, next) => {
   try {
     const { rows } = await pool.query(
-      "select id, first_name, middle_name, last_name, grade, created_at from students order by id"
+      "select id, first_name, middle_name, last_name, created_at from students order by id"
     );
     res.json(rows);
   } catch (e) {
@@ -15,11 +15,11 @@ router.get("/", async (_req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    const { first_name, middle_name, last_name, grade } = req.body;
+    const { first_name, middle_name, last_name } = req.body;
     const { rows } = await pool.query(
-      `insert into students (first_name, middle_name, last_name, grade)
-       values ($1, $2, $3, $4) returning *`,
-      [first_name, middle_name || null, last_name, grade]
+      `insert into students (first_name, middle_name, last_name)
+       values ($1, $2, $3) returning *`,
+      [first_name, middle_name || null, last_name]
     );
     res.status(201).json(rows[0]);
   } catch (e) {
@@ -30,7 +30,7 @@ router.post("/", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
   try {
     const { rows } = await pool.query(
-      "select id, first_name, middle_name, last_name, grade, created_at from students where id = $1",
+      "select id, first_name, middle_name, last_name, created_at from students where id = $1",
       [req.params.id]
     );
     if (rows.length === 0) {
