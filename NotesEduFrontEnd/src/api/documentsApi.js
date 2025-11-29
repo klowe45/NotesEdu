@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:4000/api/documents";
+import { API_URL as BASE_API_URL } from '../config/api';
+
+const API_URL = `${BASE_API_URL}/documents`;
 
 export const uploadDocuments = async (clientId, files, author) => {
   const formData = new FormData();
@@ -44,7 +46,7 @@ export const getAllDocuments = async () => {
 };
 
 export const sendDocumentByEmail = async (documentId, recipientEmail, recipientName, message, senderName) => {
-  const response = await fetch(`${API_URL}/send-email`, {
+  const response = await fetch(`${API_URL}/generate-email`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

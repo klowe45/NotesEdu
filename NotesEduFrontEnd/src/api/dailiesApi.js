@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:4000/api/dailies";
+import { API_URL as BASE_API_URL } from '../config/api';
+
+const API_URL = `${BASE_API_URL}/dailies`;
 
 export const createDaily = async (clientId, dailyData) => {
   const response = await fetch(`${API_URL}`, {

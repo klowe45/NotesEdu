@@ -6,11 +6,11 @@ const router = Router();
 // Create a new daily for a client
 router.post("/", async (req, res, next) => {
   try {
-    const { student_id, teacher_id, title, body } = req.body;
+    const { client_id, teacher_id, title, body } = req.body;
     const { rows } = await pool.query(
       `INSERT INTO dailies (client_id, teacher_id, title, body)
        VALUES ($1, $2, $3, $4) RETURNING *`,
-      [student_id, teacher_id, title, body]
+      [client_id, teacher_id, title, body]
     );
     res.status(201).json(rows[0]);
   } catch (e) {

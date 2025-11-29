@@ -14,20 +14,20 @@ router.post("/", async (req, res, next) => {
 
     const date = new Date().toISOString().split('T')[0]; // Get current date in YYYY-MM-DD format
 
-    // Prepare attendance records with student names
+    // Prepare attendance records with client names
     const attendanceRecords = [];
     for (const record of attendanceData) {
-      // Get student's first and last name from students table
-      const studentResult = await pool.query(
-        `SELECT first_name, last_name FROM students WHERE id = $1`,
+      // Get client's first and last name from clients table
+      const clientResult = await pool.query(
+        `SELECT first_name, last_name FROM clients WHERE id = $1`,
         [record.student_id]
       );
 
-      if (studentResult.rows.length === 0) {
-        throw new Error(`Student with id ${record.student_id} not found`);
+      if (clientResult.rows.length === 0) {
+        throw new Error(`Client with id ${record.student_id} not found`);
       }
 
-      const { first_name, last_name } = studentResult.rows[0];
+      const { first_name, last_name } = clientResult.rows[0];
 
       attendanceRecords.push({
         firstName: first_name,
