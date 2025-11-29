@@ -1,0 +1,207 @@
+.header-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid #e5e7eb;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.left-section {
+  position: absolute;
+  left: 0;
+}
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  padding: 0.375rem 0.5rem;
+  font-size: 0.75rem;
+  color: #374151;
+  background-color: transparent;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.logout-button:hover {
+  color: #dc2626;
+  background-color: #fef2f2;
+}
+
+.logout-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+  margin-right: 0.25rem;
+}
+
+.logout-text {
+  font-weight: 500;
+}
+
+.dropdown-button {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0.75rem;
+  color: #374151;
+  background-color: transparent;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dropdown-button:hover {
+  color: #2563eb;
+  background-color: #eff6ff;
+}
+
+.dropdown-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.dropdown-menu {
+  position: absolute;
+  left: 0;
+  margin-top: 0.5rem;
+  width: 10rem;
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  padding: 0.5rem 0;
+  z-index: 10;
+}
+
+.dropdown-menu-item {
+  width: 100%;
+  text-align: left;
+  padding: 0.375rem 0.75rem;
+  font-size: 0.875rem;
+  color: #374151;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.dropdown-menu-item:hover {
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+
+.header-logo {
+  color: black;
+  font-size: 3.125rem;
+  font-weight: bold;
+  margin: 0;
+  margin-left: 0.5rem;
+}
+
+/* Small screens (640px and up) */
+@media (min-width: 640px) {
+  .header-container {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .logout-button {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .logout-icon {
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.375rem;
+  }
+
+  .dropdown-button {
+    padding: 0.5rem 1rem;
+  }
+
+  .dropdown-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .dropdown-menu {
+    width: 11rem;
+  }
+
+  .dropdown-menu-item {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+
+  .header-logo {
+    font-size: 1.25rem;
+    margin-left: 0.625rem;
+  }
+}
+
+/* Medium screens (768px and up) */
+@media (min-width: 768px) {
+  .header-container {
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .logout-button {
+    padding: 0.5rem 0.75rem;
+    font-size: 1rem;
+  }
+
+  .logout-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .dropdown-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .dropdown-menu {
+    width: 12rem;
+  }
+
+  .header-logo {
+    font-size: 1.5rem;
+    margin-left: 0.75rem;
+  }
+}
+
+/* Large screens (1024px and up) */
+@media (min-width: 1024px) {
+  .header-container {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .logout-button {
+    font-size: 0.875rem;
+  }
+
+  .logout-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .dropdown-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .header-logo {
+    font-size: 1.25rem;
+    margin-left: 0.625rem;
+  }
+}

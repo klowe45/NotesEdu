@@ -1,0 +1,150 @@
+.footer-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  background-color: #f3f4f6;
+  border-top: 1px solid #d1d5db;
+}
+
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+.footer-welcome-text,
+.footer-brand-text {
+  margin: 0;
+  color: #4b5563;
+  font-size: 0.75rem;
+}
+
+.footer-teacher-name {
+  font-weight: 500;
+}
+
+.footer-right-section {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer-home-button {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  color: black;
+  background-color: transparent;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.footer-home-icon {
+  width: 1rem;
+  height: 1rem;
+  color: black;
+}
+
+.footer-home-text {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: black;
+}
+
+/* Small screens (640px and up) */
+@media (min-width: 640px) {
+  .footer-container {
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
+  }
+
+  .footer-content {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .footer-welcome-text,
+  .footer-brand-text {
+    font-size: 0.875rem;
+  }
+
+  .footer-right-section {
+    gap: 0.75rem;
+  }
+
+  .footer-home-button {
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+  }
+
+  .footer-home-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .footer-home-text {
+    font-size: 0.875rem;
+  }
+}
+
+/* Medium screens (768px and up) */
+@media (min-width: 768px) {
+  .footer-container {
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+  }
+
+  .footer-content {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .footer-welcome-text,
+  .footer-brand-text {
+    font-size: 1rem;
+  }
+
+  .footer-right-section {
+    gap: 1rem;
+  }
+
+  .footer-home-button {
+    padding: 0.375rem 0.75rem;
+  }
+
+  .footer-home-text {
+    font-size: 0.875rem;
+  }
+}
+
+/* Large screens (1024px and up) */
+@media (min-width: 1024px) {
+  .footer-container {
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
+  }
+
+  .footer-content {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .footer-welcome-text,
+  .footer-brand-text {
+    font-size: 0.875rem;
+  }
+
+  .footer-right-section {
+    gap: 1rem;
+  }
+}

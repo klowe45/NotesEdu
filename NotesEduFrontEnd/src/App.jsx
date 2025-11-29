@@ -6,6 +6,7 @@ import CreateStudent from "./components/CreateStudent/CreateStudent";
 import Notes from "./components/Notes/Notes";
 import Students from "./components/Students/Students";
 import StudentDashboard from "./components/StudentDashboard/StudentDashboard";
+import ClientNotes from "./components/ClientNotes/ClientNotes";
 import Signup from "./components/Signup/Signup";
 import Signin from "./components/Signin/Signin";
 import Attendance from "./components/Attendance/Attendance";
@@ -43,6 +44,10 @@ function App() {
           <Route
             path="client/:clientId"
             element={<StudentDashboard />}
+          ></Route>
+          <Route
+            path="client/:clientId/notes"
+            element={<ClientNotes />}
           ></Route>
         </Routes>
         <Footer />

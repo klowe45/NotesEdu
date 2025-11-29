@@ -1,0 +1,197 @@
+.main-container {
+  flex: 1;
+  padding-bottom: 5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.main-image {
+  border-radius: 0.75rem;
+  width: 100%;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.auth-buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.signin-button {
+  padding: 0.5rem 1rem;
+  background-color: #2563eb;
+  color: white;
+  border-radius: 0.5rem;
+  border: none;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.signin-button:hover {
+  background-color: #1d4ed8;
+}
+
+.signup-button {
+  padding: 0.5rem 1rem;
+  background-color: #374151;
+  color: white;
+  border-radius: 0.5rem;
+  border: none;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.signup-button:hover {
+  background-color: #1f2937;
+}
+
+.main-heading {
+  display: flex;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.main-description {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+  font-size: 0.875rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.debug-info {
+  text-align: center;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.debug-text {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.action-container {
+  flex: auto;
+}
+
+/* Small screens (640px and up) */
+@media (min-width: 640px) {
+  .main-container {
+    padding-bottom: 4rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+
+  .main-image {
+    border-radius: 1rem;
+    max-width: 36rem;
+  }
+
+  .auth-buttons-container {
+    gap: 1rem;
+    margin-top: 1.25rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .signin-button,
+  .signup-button {
+    padding: 0.625rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .main-heading {
+    font-size: 1.5rem;
+    margin-top: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .main-description {
+    font-size: 1rem;
+  }
+}
+
+/* Medium screens (768px and up) */
+@media (min-width: 768px) {
+  .main-container {
+    padding-bottom: 3rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .main-image {
+    max-width: 42rem;
+  }
+
+  .auth-buttons-container {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .signin-button,
+  .signup-button {
+    padding: 0.75rem 2rem;
+    font-size: 1.125rem;
+  }
+
+  .main-heading {
+    font-size: 1.875rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .main-description {
+    font-size: 1.125rem;
+  }
+}
+
+/* Large screens (1024px and up) */
+@media (min-width: 1024px) {
+  .main-container {
+    padding-bottom: 1rem;
+  }
+
+  .main-image {
+    border-radius: 1.5rem;
+    max-width: 42rem;
+  }
+
+  .auth-buttons-container {
+    margin-top: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .signin-button,
+  .signup-button {
+    padding: 0.5rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .main-heading {
+    font-size: 1.5rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .main-description {
+    font-size: 1rem;
+  }
+
+  .debug-info {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+}

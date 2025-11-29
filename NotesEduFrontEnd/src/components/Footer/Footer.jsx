@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import "./Footer.css";
 
 const Footer = () => {
   const [teacher, setTeacher] = useState(null);
@@ -22,27 +23,26 @@ const Footer = () => {
   };
 
   return (
-    <footer className="fixed bottom-0 left-0 right-0 w-full mt-auto py-2 sm:py-2.5 md:py-3 lg:py-2.5 bg-gray-100 border-t border-gray-300">
-      <div className="flex justify-between items-center px-3 sm:px-4 md:px-6 lg:px-6">
+    <footer className="footer-container">
+      <div className="footer-content">
         {teacher ? (
-          <p className="m-0 text-gray-600 text-xs sm:text-sm md:text-base lg:text-sm">
+          <p className="footer-welcome-text">
             Welcome{" "}
-            <span className="font-medium">
+            <span className="footer-teacher-name">
               {teacher.first_name} {teacher.last_name}
             </span>
           </p>
         ) : (
-          <p className="m-0 text-gray-600 text-xs sm:text-sm md:text-base lg:text-sm">NeuroNotes</p>
+          <p className="footer-brand-text">NeuroNotes</p>
         )}
-        <div className="flex items-center gap-2 sm:gap-3 md:gap-4 lg:gap-4">
+        <div className="footer-right-section">
           <button
             onClick={handleHomeClick}
-            style={{ backgroundColor: 'transparent' }}
-            className="flex items-center gap-1.5 sm:gap-2 px-2 py-1 sm:px-3 sm:py-1.5 md:px-3 md:py-1.5 text-black border-0 rounded-lg transition-all duration-200"
+            className="footer-home-button"
             title="Go to home"
           >
             <svg
-              className="w-4 h-4 sm:w-5 sm:h-5 text-black"
+              className="footer-home-icon"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -54,9 +54,9 @@ const Footer = () => {
                 d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
               />
             </svg>
-            <span className="text-xs sm:text-sm md:text-sm font-medium text-black">Home</span>
+            <span className="footer-home-text">Home</span>
           </button>
-          <p className="m-0 text-gray-600 text-xs sm:text-sm md:text-base lg:text-sm">NeuroNotes</p>
+          <p className="footer-brand-text">NeuroNotes</p>
         </div>
       </div>
     </footer>

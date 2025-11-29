@@ -3,12 +3,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getClientById } from "../../api/clientsApi";
 import { getClientNotes } from "../../api/notesApi";
 import { getClientAttendance } from "../../api/attendanceApi";
+import { getClientDailies } from "../../api/dailiesApi";
 
 const StudentDashboard = () => {
   const navigate = useNavigate();
   const { clientId } = useParams();
   const [client, setClient] = useState(null);
   const [notes, setNotes] = useState([]);
+  const [dailies, setDailies] = useState([]);
   const [attendance, setAttendance] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -31,8 +33,10 @@ const StudentDashboard = () => {
         setLoading(true);
         const clientData = await getClientById(clientId);
         const notesData = await getClientNotes(clientId);
+        const dailiesData = await getClientDailies(clientId);
         setClient(clientData);
         setNotes(notesData);
+        setDailies(dailiesData);
 
         // Fetch attendance records after we have client data
         if (clientData) {
@@ -214,6 +218,25 @@ const StudentDashboard = () => {
             <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-xl font-semibold text-gray-800">Notes</h3>
+                <button
+                  onClick={() => navigate(`/client/${clientId}/notes`)}
+                  className="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 hover:gap-2 transition-all"
+                >
+                  View All
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </button>
               </div>
               <div className="space-y-4">
                 {(() => {
@@ -258,6 +281,52 @@ const StudentDashboard = () => {
                   );
                 })()}
               </div>
+            </div>
+          </div>
+
+          {/* Dailies Section */}
+          <div className="mt-8">
+            <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                Dailies
+              </h3>
+              {dailies.length === 0 ? (
+                <p className="text-gray-400 italic">No dailies added yet.</p>
+              ) : (
+                <div className="space-y-3">
+                  {dailies
+                    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                    .map((daily) => (
+                      <div
+                        key={daily.id}
+                        className="border border-gray-200 rounded-lg p-4 bg-gray-50"
+                      >
+                        <div className="flex items-start justify-between mb-2">
+                          <div className="flex-1">
+                            {daily.title && (
+                              <h4 className="font-semibold text-gray-800 mb-1">
+                                {daily.title}
+                              </h4>
+                            )}
+                            <p className="text-gray-600 leading-relaxed">
+                              {daily.body}
+                            </p>
+                            {daily.teacher_first && (
+                              <p className="text-xs text-gray-500 mt-2">
+                                Teacher: {daily.teacher_first}{" "}
+                                {daily.teacher_last}
+                              </p>
+                            )}
+                            <p className="text-xs text-gray-400 mt-1">
+                              Created:{" "}
+                              {new Date(daily.created_at).toLocaleString()}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              )}
             </div>
           </div>
 
