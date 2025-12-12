@@ -14,33 +14,20 @@ const Main = ({ loggedIn, setLoggedIn }) => {
   return (
     <main className="main-container">
       <Header loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
-      <img
-        src={mainImg}
-        alt="class of children"
-        className="main-image"
-      />
 
       {/* Sign In and Sign Up buttons - Only show when not logged in */}
       {!loggedIn && (
         <div className="auth-buttons-container">
-          <button
-            onClick={() => navigate("/signin")}
-            className="signin-button"
-          >
+          <button onClick={() => navigate("/signin")} className="signin-button">
             Sign In
           </button>
-          <button
-            onClick={() => navigate("/signup")}
-            className="signup-button"
-          >
+          <button onClick={() => navigate("/signup")} className="signup-button">
             Sign Up
           </button>
         </div>
       )}
 
-      <h2 className="main-heading">
-        Track client progress!
-      </h2>
+      <h2 className="main-heading">Track client progress!</h2>
       <p className="main-description">
         <span>Streamline client assessment, organize</span>
         <span>notes, and gain insights into progress</span>
