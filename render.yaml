@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: notesedu-backend
+    runtime: node
+    buildCommand: cd NotesEduBackEnd && npm install
+    startCommand: cd NotesEduBackEnd && npm start
+    envVars:
+      - key: DATABASE_URL
+        sync: false
