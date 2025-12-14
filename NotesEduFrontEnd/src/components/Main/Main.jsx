@@ -13,39 +13,42 @@ const Main = ({ loggedIn, setLoggedIn }) => {
 
   return (
     <main className="main-container">
-      <Header loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
+      <div className="hero-section">
+        <Header loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
 
-      {/* Sign In and Sign Up buttons - Only show when not logged in */}
-      {!loggedIn && (
-        <div className="auth-buttons-container">
-          <button onClick={() => navigate("/signin")} className="signin-button">
-            Sign In
-          </button>
-          <button onClick={() => navigate("/signup")} className="signup-button">
-            Sign Up
-          </button>
+        {/* Sign In and Sign Up buttons - Only show when not logged in */}
+        {!loggedIn && (
+          <div className="auth-buttons-container">
+            <button onClick={() => navigate("/signin")} className="signin-button">
+              Sign In
+            </button>
+            <button onClick={() => navigate("/signup")} className="signup-button">
+              Sign Up
+            </button>
+          </div>
+        )}
+
+        <h2 className="main-heading">Track client progress!</h2>
+        <p className="main-description">
+          <span>Streamline client assessment, organize</span>
+          <span>notes, and gain insights into progress</span>
+          <span>patterns with our intuitive teacher</span>
+          <span>dashboard.</span>
+        </p>
+
+        {/* Debug info - remove after testing */}
+        <div className="debug-info">
+          <p className="debug-text"></p>
         </div>
-      )}
 
-      <h2 className="main-heading">Track client progress!</h2>
-      <p className="main-description">
-        <span>Streamline client assessment, organize</span>
-        <span>notes, and gain insights into progress</span>
-        <span>patterns with our intuitive teacher</span>
-        <span>dashboard.</span>
-      </p>
-
-      {/* Debug info - remove after testing */}
-      <div className="debug-info">
-        <p className="debug-text"></p>
+        {loggedIn && (
+          <div className="action-container">
+            <Actions />
+          </div>
+        )}
       </div>
 
-      {loggedIn && (
-        <div className="action-container">
-          <Actions />
-        </div>
-      )}
-      <div>
+      <div className="about-section">
         <About />
       </div>
       <div></div>

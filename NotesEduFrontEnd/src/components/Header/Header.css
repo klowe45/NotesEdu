@@ -178,30 +178,54 @@
   }
 }
 
-/* Large screens (1024px and up) */
+/* Large screens (1024px and up) - Laptop optimized */
 @media (min-width: 1024px) {
   .header-container {
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
     margin-bottom: 1.5rem;
   }
 
   .logout-button {
-    font-size: 0.875rem;
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
   }
 
   .logout-icon {
-    width: 1rem;
-    height: 1rem;
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  .dropdown-button {
+    padding: 0.625rem 1.25rem;
   }
 
   .dropdown-icon {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+
+  .dropdown-menu {
+    width: 13rem;
   }
 
   .header-logo {
-    font-size: 1.25rem;
-    margin-left: 0.625rem;
+    font-size: 1.5rem;
+    margin-left: 2rem;
+  }
+}
+
+/* Extra large screens (1280px and up) */
+@media (min-width: 1280px) {
+  .header-container {
+    padding-left: 3rem;
+    padding-right: 3rem;
+  }
+
+  .header-logo {
+    font-size: 1.75rem;
+    margin-left: 3rem;
   }
 }

@@ -57,9 +57,9 @@ const CreateStudent = () => {
     <div className="min-h-screen bg-white-50 p-4 pb-20">
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center mb-4">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4">
           <button
-            className="flex items-center px-3 py-2 text-white hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 group"
+            className="flex items-center px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 group mb-4 lg:mb-0"
             onClick={handleReturn}
           >
             <svg
@@ -77,15 +77,16 @@ const CreateStudent = () => {
             </svg>
             <span className="font-medium">Back to Dashboard</span>
           </button>
+
+          <div className="text-center lg:absolute lg:left-1/2 lg:transform lg:-translate-x-1/2">
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">
+              Create New Client
+            </h1>
+          </div>
         </div>
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            Create New Client
-          </h1>
-          <p className="text-lg text-gray-600">
-            Add a new client to your dashboard
-          </p>
-        </div>
+        <p className="text-lg text-gray-600 text-center">
+          Add a new client to your dashboard
+        </p>
       </div>
 
       {/* Form Container */}

@@ -98,9 +98,9 @@ const ClientDailies = () => {
       <div className="container mx-auto">
         {/* Header with Return Button */}
         <div className="mb-8">
-          <div className="flex items-center mb-4">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-2">
             <button
-              className="flex items-center px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 group"
+              className="flex items-center px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 group mb-4 lg:mb-0"
               onClick={handleReturn}
             >
               <svg
@@ -118,12 +118,13 @@ const ClientDailies = () => {
               </svg>
               <span className="font-medium">Back to Dashboard</span>
             </button>
+
+            <h1 className="text-4xl font-bold text-gray-900 text-center lg:absolute lg:left-1/2 lg:transform lg:-translate-x-1/2">
+              {client.first_name}{" "}
+              {client.middle_name ? `${client.middle_name.charAt(0)}. ` : ""}
+              {client.last_name}
+            </h1>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 text-center">
-            {client.first_name}{" "}
-            {client.middle_name ? `${client.middle_name.charAt(0)}. ` : ""}
-            {client.last_name}
-          </h1>
           <p className="text-center text-gray-600 text-lg mt-2">All Dailies</p>
         </div>
 
@@ -207,13 +208,17 @@ const ClientDailies = () => {
                         </p>
                       )}
                       <p className="text-xs text-gray-400">
-                        {new Date(daily.created_at).toLocaleDateString("en-US", {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
+                        {daily.date
+                          ? new Date(daily.date).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })
+                          : new Date(daily.created_at).toLocaleDateString("en-US", {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })}
                       </p>
                     </div>
                   </div>

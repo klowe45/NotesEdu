@@ -38,9 +38,9 @@ const BehavioralReports = () => {
       <div className="container mx-auto">
         {/* Header with Return Button */}
         <div className="mb-8">
-          <div className="flex items-center mb-4">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4 lg:mb-8">
             <button
-              className="flex items-center px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 group"
+              className="flex items-center px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 group mb-4 lg:mb-0"
               onClick={handleReturn}
             >
               <svg
@@ -58,10 +58,11 @@ const BehavioralReports = () => {
               </svg>
               <span className="font-medium">Back to Home</span>
             </button>
+
+            <h2 className="text-4xl font-bold text-gray-900 text-center mb-4 lg:mb-0 lg:absolute lg:left-1/2 lg:transform lg:-translate-x-1/2">
+              Behavioral Reports
+            </h2>
           </div>
-          <h2 className="text-4xl font-bold text-gray-900 text-center">
-            Behavioral Reports
-          </h2>
         </div>
 
         {/* Students List */}

@@ -34,9 +34,9 @@ const Students = () => {
       <div className="container mx-auto">
         {/* Header with Return Button */}
         <div className="mb-8">
-          <div className="flex justify-center items-center gap-4 mb-4">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4 lg:mb-8">
             <button
-              className="flex items-center px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 group"
+              className="flex items-center px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 group mb-4 lg:mb-0"
               onClick={handleReturn}
             >
               <svg
@@ -54,6 +54,10 @@ const Students = () => {
               </svg>
               <span className="font-medium">Back to Home</span>
             </button>
+
+            <h2 className="text-4xl font-bold text-gray-900 text-center mb-4 lg:mb-0 lg:absolute lg:left-1/2 lg:transform lg:-translate-x-1/2">
+              Clients
+            </h2>
 
             <button
               className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -75,9 +79,6 @@ const Students = () => {
               <span className="font-medium">Create Another Client</span>
             </button>
           </div>
-          <h2 className="text-4xl font-bold text-gray-900 text-center">
-            Clients
-          </h2>
         </div>
 
         {/* Clients Grid */}
