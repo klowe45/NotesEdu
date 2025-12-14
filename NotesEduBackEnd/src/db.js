@@ -7,11 +7,21 @@ const { Pool } = pkg;
 // Prefer IPv4 so Node doesn't try IPv6 first on Render
 dns.setDefaultResultOrder("ipv4first");
 
-// Always use DATABASE_URL on Render/Neon
-export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }, // safe with Neon; URL also has sslmode=require
-});
+// Use DATABASE_URL (production/Neon) or fall back to local config
+export const pool = new Pool(
+  process.env.DATABASE_URL
+    ? {
+        connectionString: process.env.DATABASE_URL,
+        ssl: { rejectUnauthorized: false },
+      }
+    : {
+        user: process.env.PGUSER,
+        host: process.env.PGHOST,
+        database: process.env.PGDATABASE,
+        password: process.env.PGPASSWORD || undefined,
+        port: Number(process.env.PGPORT || 5432),
+      }
+);
 
 // Optional: quick startup check
 export async function assertDb() {
