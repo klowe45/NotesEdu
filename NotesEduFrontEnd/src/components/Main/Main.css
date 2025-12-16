@@ -85,7 +85,11 @@
 }
 
 .action-container {
-  flex: auto;
+  flex: none;
+}
+
+.about-section {
+  margin-top: 0.5rem;
 }
 
 /* Small screens (640px and up) */
@@ -132,6 +136,12 @@
     padding-right: 2rem;
   }
 
+  .hero-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
   .main-image {
     max-width: 42rem;
   }
@@ -158,40 +168,71 @@
   }
 }
 
-/* Large screens (1024px and up) */
+/* Large screens (1024px and up) - Laptop optimized */
 @media (min-width: 1024px) {
   .main-container {
-    padding-bottom: 1rem;
+    padding-bottom: 2rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
+    max-width: 1024px;
+    margin: 0 auto;
   }
 
   .main-image {
     border-radius: 1.5rem;
-    max-width: 42rem;
+    max-width: 48rem;
   }
 
   .auth-buttons-container {
-    margin-top: 0.75rem;
-    margin-bottom: 0.5rem;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+    gap: 1.25rem;
   }
 
   .signin-button,
   .signup-button {
-    padding: 0.5rem 1.5rem;
-    font-size: 1rem;
+    padding: 0.75rem 2rem;
+    font-size: 1.125rem;
   }
 
   .main-heading {
-    font-size: 1.5rem;
-    margin-top: 0.25rem;
-    margin-bottom: 0.25rem;
+    font-size: 2rem;
+    margin-top: 1rem;
+    margin-bottom: 0.75rem;
   }
 
   .main-description {
-    font-size: 1rem;
+    font-size: 1.125rem;
+    max-width: 48rem;
   }
 
   .debug-info {
-    margin-top: 0.25rem;
-    margin-bottom: 0.25rem;
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .about-section {
+    margin-top: 0.5rem;
+  }
+}
+
+/* Extra large screens (1280px and up) */
+@media (min-width: 1280px) {
+  .main-container {
+    padding-left: 4rem;
+    padding-right: 4rem;
+  }
+
+  .main-image {
+    max-width: 56rem;
+  }
+
+  .main-heading {
+    font-size: 2.25rem;
+  }
+
+  .main-description {
+    font-size: 1.25rem;
+    max-width: 56rem;
   }
 }

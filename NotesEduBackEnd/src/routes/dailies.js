@@ -6,11 +6,11 @@ const router = Router();
 // Create a new daily for a client
 router.post("/", async (req, res, next) => {
   try {
-    const { client_id, teacher_id, title, body } = req.body;
+    const { client_id, teacher_id, title, body, date } = req.body;
     const { rows } = await pool.query(
-      `INSERT INTO dailies (client_id, teacher_id, title, body)
-       VALUES ($1, $2, $3, $4) RETURNING *`,
-      [client_id, teacher_id, title, body]
+      `INSERT INTO dailies (client_id, teacher_id, title, body, date)
+       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+      [client_id, teacher_id, title, body, date]
     );
     res.status(201).json(rows[0]);
   } catch (e) {
@@ -22,7 +22,7 @@ router.post("/", async (req, res, next) => {
 router.get("/client/:clientId", async (req, res, next) => {
   try {
     const { rows } = await pool.query(
-      `SELECT d.id, d.title, d.body, d.created_at,
+      `SELECT d.id, d.title, d.body, d.date, d.created_at,
               t.first_name as teacher_first, t.last_name as teacher_last
        FROM dailies d
        LEFT JOIN teachers t on t.id = d.teacher_id
@@ -40,7 +40,7 @@ router.get("/client/:clientId", async (req, res, next) => {
 router.get("/", async (_req, res, next) => {
   try {
     const { rows } = await pool.query(
-      `SELECT d.id, d.client_id, d.title, d.body, d.created_at,
+      `SELECT d.id, d.client_id, d.title, d.body, d.date, d.created_at,
               t.first_name as teacher_first, t.last_name as teacher_last,
               c.first_name as client_first, c.last_name as client_last
        FROM dailies d

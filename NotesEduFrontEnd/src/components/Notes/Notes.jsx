@@ -8,23 +8,11 @@ const Notes = () => {
   const navigate = useNavigate();
   const [notes, setNotes] = useState("");
   const [selectedClients, setSelectedClients] = useState([]);
-  const [selectedCategories, setSelectedCategories] = useState([]);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [savedData, setSavedData] = useState({ clientCount: 0, categories: [] });
+  const [savedData, setSavedData] = useState({ clientCount: 0 });
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
-  const categories = [
-    "Money Management",
-    "Meal Prep",
-    "Medocation Management",
-    "Housekeeping",
-    "Shopping",
-    "transportation",
-    "Communication",
-    "Health Management",
-  ];
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -59,22 +47,9 @@ const Notes = () => {
     );
   };
 
-  const handleCategoryToggle = (category) => {
-    setSelectedCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((cat) => cat !== category)
-        : [...prev, category]
-    );
-  };
-
   const handleSaveNotes = async () => {
     if (selectedClients.length === 0) {
       alert("Please select at least one client to save notes to.");
-      return;
-    }
-
-    if (selectedCategories.length === 0) {
-      alert("Please select at least one category for the notes.");
       return;
     }
 
@@ -89,35 +64,22 @@ const Notes = () => {
       const teacher = teacherData ? JSON.parse(teacherData) : null;
       const teacherId = teacher?.id || null;
 
-      // Create notes for each selected client and each selected category
-      const notePromises = [];
-      selectedClients.forEach((clientId) => {
-        selectedCategories.forEach((category) => {
-          notePromises.push(
-            createNote(clientId, {
-              teacher_id: teacherId,
-              title: category,
-              body: notes.trim(),
-            })
-          );
-        });
-      });
+      // Create notes for each selected client
+      const notePromises = selectedClients.map((clientId) =>
+        createNote(clientId, {
+          teacher_id: teacherId,
+          title: null,
+          body: notes.trim(),
+        })
+      );
 
       await Promise.all(notePromises);
 
-      console.log(
-        "Notes saved to clients:",
-        selectedClients,
-        "Notes:",
-        notes,
-        "Categories:",
-        selectedCategories
-      );
+      console.log("Notes saved to clients:", selectedClients, "Notes:", notes);
 
       // Save data for modal before resetting
       setSavedData({
         clientCount: selectedClients.length,
-        categories: selectedCategories,
       });
 
       // Show success modal
@@ -126,7 +88,6 @@ const Notes = () => {
       // Reset after saving
       setNotes("");
       setSelectedClients([]);
-      setSelectedCategories([]);
     } catch (err) {
       console.error("Error saving notes:", err);
       alert("Failed to save notes. Please try again.");
@@ -136,7 +97,6 @@ const Notes = () => {
   const handleClearNotes = () => {
     setNotes("");
     setSelectedClients([]);
-    setSelectedCategories([]);
   };
 
   return (
@@ -144,9 +104,9 @@ const Notes = () => {
       <div className="container mx-auto">
         {/* Header with Navigation Buttons */}
         <div className="mb-8">
-          <div className="flex items-center gap-4 mb-4">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-4 lg:mb-8">
             <button
-              className="flex items-center px-2 py-1.5 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-all duration-200 group"
+              className="flex items-center px-2 py-1.5 text-sm text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md transition-all duration-200 group mb-4 lg:mb-0"
               onClick={handleReturn}
             >
               <svg
@@ -164,6 +124,10 @@ const Notes = () => {
               </svg>
               <span className="font-medium">Back to Dashboard</span>
             </button>
+
+            <h2 className="text-4xl font-bold text-gray-900 text-center mb-4 lg:mb-0 lg:absolute lg:left-1/2 lg:transform lg:-translate-x-1/2">
+              Notes
+            </h2>
 
             <button
               className="flex items-center px-3 py-1.5 text-sm bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
@@ -185,54 +149,21 @@ const Notes = () => {
               <span className="font-medium">View Clients</span>
             </button>
           </div>
-          <h2 className="text-4xl font-bold text-gray-900 text-center">
-            Add Notes
-          </h2>
         </div>
 
         {/* Notes Content */}
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Notes Input Section */}
-            <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+            <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200 flex flex-col">
               <h3 className="text-xl font-semibold text-gray-800 mb-4">
                 Write Notes
               </h3>
 
-              {/* Category Selection */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Select Categories ({selectedCategories.length} selected)
-                </label>
-                <div className="space-y-2 max-h-60 overflow-y-auto border border-gray-300 rounded-lg p-3">
-                  {categories.map((category, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center p-2 hover:bg-gray-50 rounded transition-colors"
-                    >
-                      <input
-                        type="checkbox"
-                        id={`category-${index}`}
-                        checked={selectedCategories.includes(category)}
-                        onChange={() => handleCategoryToggle(category)}
-                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                      />
-                      <label
-                        htmlFor={`category-${index}`}
-                        className="ml-3 flex-1 cursor-pointer text-sm text-gray-900"
-                      >
-                        {category}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
               <textarea
                 value={notes}
                 onChange={handleNotesChange}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-vertical"
-                rows={10}
+                className="w-full flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-vertical"
                 placeholder="Type your notes here..."
               />
             </div>
@@ -285,7 +216,7 @@ const Notes = () => {
                   ))}
                 </div>
               )}
-              <div className="flex gap-2 mt-4">
+              <div className="flex gap-2 mt-8 justify-center">
                 <button
                   onClick={handleSaveNotes}
                   className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"

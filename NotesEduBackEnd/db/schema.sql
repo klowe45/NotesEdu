@@ -34,12 +34,30 @@ CREATE TABLE IF NOT EXISTS dailies (
   teacher_id INT REFERENCES teachers(id) ON DELETE SET NULL,
   title VARCHAR(150) NOT NULL,
   body TEXT NOT NULL,
+  date DATE NOT NULL DEFAULT CURRENT_DATE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX IF NOT EXISTS idx_dailies_client_id ON dailies(client_id);
 CREATE INDEX IF NOT EXISTS idx_dailies_teacher_id ON dailies(teacher_id);
 CREATE INDEX IF NOT EXISTS idx_dailies_created_at ON dailies(created_at);
+
+CREATE TABLE IF NOT EXISTS ratings (
+  id SERIAL PRIMARY KEY,
+  client_id INT NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
+  category VARCHAR(50) NOT NULL,
+  rating_value INT NOT NULL CHECK (rating_value >= 1 AND rating_value <= 5),
+  daily_id INT REFERENCES dailies(id) ON DELETE CASCADE,
+  teacher_id INT REFERENCES teachers(id) ON DELETE SET NULL,
+  date DATE NOT NULL DEFAULT CURRENT_DATE,
+  notes TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_ratings_client_id ON ratings(client_id);
+CREATE INDEX IF NOT EXISTS idx_ratings_daily_id ON ratings(daily_id);
+CREATE INDEX IF NOT EXISTS idx_ratings_date ON ratings(date);
+CREATE INDEX IF NOT EXISTS idx_ratings_category ON ratings(category);
 
 -- Create sequence first
 CREATE SEQUENCE IF NOT EXISTS attendance_id_seq;

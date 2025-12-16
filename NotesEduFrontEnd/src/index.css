@@ -33,6 +33,32 @@ body {
   padding-top: 40px;
 }
 
+/* App container for responsive max-width */
+#root {
+  width: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Laptop and desktop screens */
+@media (min-width: 1024px) {
+  body {
+    padding-top: 20px;
+  }
+
+  #root {
+    max-width: 1280px;
+  }
+}
+
+/* Extra large screens */
+@media (min-width: 1536px) {
+  #root {
+    max-width: 1536px;
+  }
+}
+
 h1 {
   font-size: 3rem;
   line-height: 1.1;
