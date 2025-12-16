@@ -25,15 +25,10 @@ const Footer = () => {
   return (
     <footer className="footer-container">
       <div className="footer-content">
-        {teacher ? (
-          <p className="footer-welcome-text">
-            Welcome{" "}
-            <span className="footer-teacher-name">
-              {teacher.first_name} {teacher.last_name}
-            </span>
+        {teacher && (
+          <p className="footer-teacher-name">
+            {teacher.first_name} {teacher.last_name}
           </p>
-        ) : (
-          <p className="footer-brand-text">NeuroNotes</p>
         )}
         <div className="footer-right-section">
           <button
