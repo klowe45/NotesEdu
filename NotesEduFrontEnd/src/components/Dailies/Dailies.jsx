@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAllClients } from "../../api/clientsApi";
 import { createDaily } from "../../api/dailiesApi";
+import { createRating } from "../../api/ratingsApi";
 import SuccessModal from "../Modal/SuccessModal";
 
 const Dailies = () => {
@@ -9,13 +10,26 @@ const Dailies = () => {
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [dailyText, setDailyText] = useState("");
-  const [selectedClients, setSelectedClients] = useState([]);
-  const [selectedCategories, setSelectedCategories] = useState([]);
-  const [categoryRatings, setCategoryRatings] = useState({});
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
-  );
+  const [dailyText, setDailyText] = useState(() => {
+    const saved = localStorage.getItem("dailies_text");
+    return saved || "";
+  });
+  const [selectedClients, setSelectedClients] = useState(() => {
+    const saved = localStorage.getItem("dailies_selectedClients");
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [selectedCategories, setSelectedCategories] = useState(() => {
+    const saved = localStorage.getItem("dailies_selectedCategories");
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [categoryRatings, setCategoryRatings] = useState(() => {
+    const saved = localStorage.getItem("dailies_categoryRatings");
+    return saved ? JSON.parse(saved) : {};
+  });
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const saved = localStorage.getItem("dailies_selectedDate");
+    return saved || new Date().toISOString().split("T")[0];
+  });
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [savedData, setSavedData] = useState({
     clientCount: 0,
@@ -49,6 +63,27 @@ const Dailies = () => {
 
     fetchClients();
   }, []);
+
+  // Save to localStorage whenever values change
+  useEffect(() => {
+    localStorage.setItem("dailies_text", dailyText);
+  }, [dailyText]);
+
+  useEffect(() => {
+    localStorage.setItem("dailies_selectedClients", JSON.stringify(selectedClients));
+  }, [selectedClients]);
+
+  useEffect(() => {
+    localStorage.setItem("dailies_selectedCategories", JSON.stringify(selectedCategories));
+  }, [selectedCategories]);
+
+  useEffect(() => {
+    localStorage.setItem("dailies_categoryRatings", JSON.stringify(categoryRatings));
+  }, [categoryRatings]);
+
+  useEffect(() => {
+    localStorage.setItem("dailies_selectedDate", selectedDate);
+  }, [selectedDate]);
 
   const handleReturn = () => {
     navigate("/");
@@ -106,30 +141,43 @@ const Dailies = () => {
       const teacher = teacherData ? JSON.parse(teacherData) : null;
       const teacherId = teacher?.id || null;
 
-      // Create dailies for each selected client and each selected category
-      const dailyPromises = [];
-      selectedClients.forEach((clientId) => {
-        selectedCategories.forEach((category) => {
-          dailyPromises.push(
-            createDaily(clientId, {
-              teacher_id: teacherId,
-              title: category,
-              body: dailyText.trim(),
-              date: selectedDate,
-            })
-          );
-        });
-      });
+      // Create dailies and ratings for each selected client and each selected category
+      for (const clientId of selectedClients) {
+        for (const category of selectedCategories) {
+          // Create the daily entry
+          const dailyEntry = await createDaily(clientId, {
+            teacher_id: teacherId,
+            title: category,
+            body: dailyText.trim(),
+            date: selectedDate,
+          });
 
-      await Promise.all(dailyPromises);
+          // Check if there's a rating for this client and category
+          const ratingValue = categoryRatings[clientId]?.[category];
+          if (ratingValue) {
+            // Save the rating to the database
+            await createRating({
+              client_id: clientId,
+              category: category,
+              rating_value: ratingValue,
+              daily_id: dailyEntry.id,
+              teacher_id: teacherId,
+              date: selectedDate,
+              notes: null,
+            });
+          }
+        }
+      }
 
       console.log(
-        "Dailies saved to clients:",
+        "Dailies and ratings saved to clients:",
         selectedClients,
         "Notes:",
         dailyText,
         "Categories:",
-        selectedCategories
+        selectedCategories,
+        "Ratings:",
+        categoryRatings
       );
 
       // Save data for modal before resetting
@@ -145,6 +193,12 @@ const Dailies = () => {
       setDailyText("");
       setSelectedClients([]);
       setSelectedCategories([]);
+      setCategoryRatings({});
+      // Clear localStorage
+      localStorage.removeItem("dailies_text");
+      localStorage.removeItem("dailies_selectedClients");
+      localStorage.removeItem("dailies_selectedCategories");
+      localStorage.removeItem("dailies_categoryRatings");
     } catch (err) {
       console.error("Error saving dailies:", err);
       alert("Failed to save dailies. Please try again.");
@@ -155,6 +209,12 @@ const Dailies = () => {
     setDailyText("");
     setSelectedClients([]);
     setSelectedCategories([]);
+    setCategoryRatings({});
+    // Clear localStorage
+    localStorage.removeItem("dailies_text");
+    localStorage.removeItem("dailies_selectedClients");
+    localStorage.removeItem("dailies_selectedCategories");
+    localStorage.removeItem("dailies_categoryRatings");
   };
 
   return (
@@ -368,18 +428,18 @@ const Dailies = () => {
                                   <button
                                     key={rating}
                                     onClick={() =>
-                                      handleCategoryRating(category, rating)
+                                      handleCategoryRating(clientId, category, rating)
                                     }
                                     className="w-6 h-6 flex items-center justify-center text-xs font-semibold transition-all"
                                     style={{
                                       borderRadius: "50%",
                                       border: "2px solid black",
                                       backgroundColor:
-                                        categoryRatings[category] === rating
+                                        categoryRatings[clientId]?.[category] === rating
                                           ? "black"
                                           : "transparent",
                                       color:
-                                        categoryRatings[category] === rating
+                                        categoryRatings[clientId]?.[category] === rating
                                           ? "white"
                                           : "black",
                                     }}

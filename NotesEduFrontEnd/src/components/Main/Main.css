@@ -85,7 +85,11 @@
 }
 
 .action-container {
-  flex: auto;
+  flex: none;
+}
+
+.about-section {
+  margin-top: 0.5rem;
 }
 
 /* Small screens (640px and up) */
@@ -133,10 +137,9 @@
   }
 
   .hero-section {
-    min-height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .main-image {
@@ -209,7 +212,7 @@
   }
 
   .about-section {
-    margin-top: 2rem;
+    margin-top: 0.5rem;
   }
 }
 

@@ -86,35 +86,58 @@ const StudentDashboard = () => {
       <div className="container mx-auto">
         {/* Header with Return Button */}
         <div className="mb-8">
-          <div className="flex items-center mb-4">
-            <button
-              className="flex items-center px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 group"
-              onClick={handleReturn}
-            >
-              <svg
-                className="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform duration-200"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+          <div className="flex items-center justify-between">
+            <div className="flex-1 flex justify-start">
+              <button
+                className="flex items-center px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 group"
+                onClick={handleReturn}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              <span className="font-medium">Back to Clients</span>
-            </button>
+                <svg
+                  className="w-5 h-5 mr-2 transform group-hover:-translate-x-1 transition-transform duration-200"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+                <span className="font-medium">Back to Clients</span>
+              </button>
+            </div>
+            <div className="flex-1 text-center">
+              <h1 className="text-4xl font-bold text-gray-900">
+                {client.first_name}{" "}
+                {client.middle_name ? `${client.middle_name.charAt(0)}. ` : ""}
+                {client.last_name}
+              </h1>
+              <p className="text-gray-600 text-lg mt-2">Dashboard</p>
+            </div>
+            <div className="flex-1 flex justify-end">
+              <button
+                onClick={() => navigate(`/client/${clientId}/charts`)}
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
+                  />
+                </svg>
+                <span className="font-medium">Charts</span>
+              </button>
+            </div>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 text-center">
-            {client.first_name}{" "}
-            {client.middle_name ? `${client.middle_name.charAt(0)}. ` : ""}
-            {client.last_name}
-          </h1>
-          <p className="text-center text-gray-600 text-lg mt-2">
-            Dashboard
-          </p>
         </div>
 
         {/* Student Information */}

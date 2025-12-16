@@ -30,40 +30,22 @@ const Actions = () => {
 
   return (
     <div className="actions-grid">
-      <button
-        className="action-button"
-        onClick={handleCreateClientClick}
-      >
+      <button className="action-button" onClick={handleCreateClientClick}>
         Create Client
       </button>
-      <button
-        className="action-button"
-        onClick={handleClientsClick}
-      >
+      <button className="action-button" onClick={handleClientsClick}>
         Clients
       </button>
-      <button
-        className="action-button"
-        onClick={handleAttendanceClick}
-      >
+      <button className="action-button" onClick={handleAttendanceClick}>
         Attendance
       </button>
-      <button
-        className="action-button"
-        onClick={handleNotesClick}
-      >
+      <button className="action-button" onClick={handleNotesClick}>
         Notes
       </button>
-      <button
-        className="action-button"
-        onClick={handleReportsClick}
-      >
-        Reports
+      <button className="action-button" onClick={handleReportsClick}>
+        Behavior Reports
       </button>
-      <button
-        className="action-button"
-        onClick={handleDailiesClick}
-      >
+      <button className="action-button" onClick={handleDailiesClick}>
         Dailies
       </button>
     </div>
