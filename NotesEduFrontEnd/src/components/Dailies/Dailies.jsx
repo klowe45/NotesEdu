@@ -35,17 +35,21 @@ const Dailies = () => {
     clientCount: 0,
     categories: [],
   });
-
-  const categories = [
-    "Money Management",
-    "Meal Prep",
-    "Medocation Management",
-    "Housekeeping",
-    "Shopping",
-    "transportation",
-    "Communication",
-    "Health Management",
-  ];
+  const [categories, setCategories] = useState(() => {
+    const saved = localStorage.getItem("dailies_categories");
+    return saved ? JSON.parse(saved) : [
+      "Money Management",
+      "Meal Prep",
+      "Medocation Management",
+      "Housekeeping",
+      "Shopping",
+      "transportation",
+      "Communication",
+      "Health Management",
+    ];
+  });
+  const [newCategory, setNewCategory] = useState("");
+  const [showAddCategory, setShowAddCategory] = useState(false);
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -85,8 +89,28 @@ const Dailies = () => {
     localStorage.setItem("dailies_selectedDate", selectedDate);
   }, [selectedDate]);
 
+  useEffect(() => {
+    localStorage.setItem("dailies_categories", JSON.stringify(categories));
+  }, [categories]);
+
   const handleReturn = () => {
     navigate("/");
+  };
+
+  const handleAddCategory = () => {
+    if (newCategory.trim() && !categories.includes(newCategory.trim())) {
+      setCategories([...categories, newCategory.trim()]);
+      setNewCategory("");
+      setShowAddCategory(false);
+    }
+  };
+
+  const handleRemoveCategory = (categoryToRemove) => {
+    if (confirm(`Are you sure you want to remove "${categoryToRemove}"?`)) {
+      setCategories(categories.filter((cat) => cat !== categoryToRemove));
+      // Also remove from selected categories if it was selected
+      setSelectedCategories(selectedCategories.filter((cat) => cat !== categoryToRemove));
+    }
   };
 
   const handleDailyTextChange = (e) => {
@@ -280,14 +304,57 @@ const Dailies = () => {
 
               {/* Category Selection */}
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Select Categories ({selectedCategories.length} selected)
-                </label>
+                <div className="flex items-center justify-between mb-2">
+                  <label className="block text-sm font-medium text-gray-700">
+                    Select Categories ({selectedCategories.length} selected)
+                  </label>
+                  <button
+                    onClick={() => setShowAddCategory(!showAddCategory)}
+                    className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    </svg>
+                    Add Category
+                  </button>
+                </div>
+
+                {/* Add Category Form */}
+                {showAddCategory && (
+                  <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={newCategory}
+                        onChange={(e) => setNewCategory(e.target.value)}
+                        onKeyPress={(e) => e.key === 'Enter' && handleAddCategory()}
+                        placeholder="Enter new category name"
+                        className="flex-1 px-3 py-1.5 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                      />
+                      <button
+                        onClick={handleAddCategory}
+                        className="px-3 py-1.5 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+                      >
+                        Add
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowAddCategory(false);
+                          setNewCategory("");
+                        }}
+                        className="px-3 py-1.5 text-sm bg-gray-400 text-white rounded hover:bg-gray-500 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 <div className="space-y-2 max-h-60 overflow-y-auto border border-gray-300 rounded-lg p-3">
                   {categories.map((category, index) => (
                     <div
                       key={index}
-                      className="flex items-center p-2 hover:bg-gray-50 rounded transition-colors"
+                      className="flex items-center p-2 hover:bg-gray-50 rounded transition-colors group"
                     >
                       <input
                         type="checkbox"
@@ -302,6 +369,15 @@ const Dailies = () => {
                       >
                         {category}
                       </label>
+                      <button
+                        onClick={() => handleRemoveCategory(category)}
+                        className="opacity-0 group-hover:opacity-100 p-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded transition-all"
+                        title="Remove category"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
                     </div>
                   ))}
                 </div>
