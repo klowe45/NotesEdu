@@ -9,6 +9,8 @@ import StudentDashboard from "./components/StudentDashboard/StudentDashboard";
 import ClientNotes from "./components/ClientNotes/ClientNotes";
 import ClientDailies from "./components/ClientDailies/ClientDailies";
 import Charts from "./components/Charts/Charts";
+import Medication from "./components/Medication/Medication";
+import BasicInformation from "./components/BasicInformation/BasicInformation";
 import Signup from "./components/Signup/Signup";
 import Signin from "./components/Signin/Signin";
 import Attendance from "./components/Attendance/Attendance";
@@ -58,6 +60,14 @@ function App() {
           <Route
             path="client/:clientId/charts"
             element={<Charts />}
+          ></Route>
+          <Route
+            path="client/:clientId/medication"
+            element={<Medication />}
+          ></Route>
+          <Route
+            path="client/:clientId/basic-information"
+            element={<BasicInformation />}
           ></Route>
         </Routes>
         <Footer />

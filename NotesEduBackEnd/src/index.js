@@ -12,6 +12,7 @@ import attendance from "./routes/attendance.js";
 import documents from "./routes/documents.js";
 import dailies from "./routes/dailies.js";
 import ratings from "./routes/ratings.js";
+import medication from "./routes/medication.js";
 
 const app = express();
 
@@ -71,6 +72,7 @@ app.use("/api/attendance", attendance);
 app.use("/api/documents", documents);
 app.use("/api/dailies", dailies);
 app.use("/api/ratings", ratings);
+app.use("/api/medication", medication);
 
 /** 404 for unknown API routes */
 app.use("/api", (_req, res) => {
