@@ -1,5 +1,5 @@
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:4000/api";
+  import.meta.env.VITE_API_BASE_URL || "https://notesedu.onrender.com/api";
 
 export const saveMedication = async (medicationData) => {
   const response = await fetch(`${API_BASE_URL}/medication`, {

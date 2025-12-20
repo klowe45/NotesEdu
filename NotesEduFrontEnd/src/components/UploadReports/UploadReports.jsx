@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getClientById } from "../../api/clientsApi";
 import { uploadDocuments, getClientDocuments, sendDocumentByEmail } from "../../api/documentsApi";
+import { API_URL } from "../../config/api";
 
 const UploadReports = () => {
   const navigate = useNavigate();
@@ -137,7 +138,7 @@ const UploadReports = () => {
   const handleDownloadFromPreview = () => {
     if (documentToPreview) {
       // Open document in new tab for download
-      const url = `http://localhost:4000/api/documents/download/${documentToPreview.id}`;
+      const url = `${API_URL}/documents/download/${documentToPreview.id}`;
       window.open(url, '_blank');
     }
   };
@@ -198,7 +199,7 @@ const UploadReports = () => {
       const senderName = teacher ? `${teacher.first_name} ${teacher.last_name}` : "Teacher";
 
       // Call the new generate-email endpoint
-      const response = await fetch("http://localhost:4000/api/documents/generate-email", {
+      const response = await fetch(`${API_URL}/documents/generate-email`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -680,14 +681,14 @@ const UploadReports = () => {
                 {isImageFile(documentToPreview.filename) ? (
                   <div className="flex items-center justify-center h-full">
                     <img
-                      src={`http://localhost:4000/api/documents/download/${documentToPreview.id}`}
+                      src={`${API_URL}/documents/download/${documentToPreview.id}`}
                       alt={documentToPreview.filename}
                       className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
                     />
                   </div>
                 ) : isPdfFile(documentToPreview.filename) ? (
                   <iframe
-                    src={`http://localhost:4000/api/documents/download/${documentToPreview.id}`}
+                    src={`${API_URL}/documents/download/${documentToPreview.id}`}
                     className="w-full h-full min-h-[600px] rounded-lg shadow-lg"
                     title={documentToPreview.filename}
                   />
