@@ -13,8 +13,8 @@ const getApiUrl = () => {
     // Running on iOS or Android - use local IP
     return `http://${LOCAL_IP}:4000/api`;
   } else {
-    // Running in web browser - use environment variable or localhost for dev
-    return import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
+    // Running in web browser - use production URL by default
+    return import.meta.env.VITE_API_BASE_URL || 'https://notesedu.onrender.com/api';
   }
 };
 
