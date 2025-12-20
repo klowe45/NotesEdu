@@ -1,6 +1,6 @@
 import { Capacitor } from '@capacitor/core';
 
-// IMPORTANT: Update this with your computer's local IP address
+// IMPORTANT: Update this with your computer's local IP address for mobile development
 // To find your IP:
 // - Mac: System Settings > Network > Wi-Fi > Details > IP address
 // - Or run: ifconfig | grep "inet " | grep -v 127.0.0.1
@@ -13,8 +13,8 @@ const getApiUrl = () => {
     // Running on iOS or Android - use local IP
     return `http://${LOCAL_IP}:4000/api`;
   } else {
-    // Running in web browser - use localhost
-    return 'http://localhost:4000/api';
+    // Running in web browser - use environment variable or localhost for dev
+    return import.meta.env.VITE_API_BASE_URL || 'http://localhost:4000/api';
   }
 };
 
