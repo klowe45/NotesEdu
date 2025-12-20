@@ -76,3 +76,17 @@ ALTER SEQUENCE attendance_id_seq OWNED BY attendance.id;
 
 CREATE INDEX IF NOT EXISTS idx_attendance_date ON attendance(date);
 CREATE INDEX IF NOT EXISTS idx_attendance_name ON attendance(first_name, last_name);
+
+CREATE TABLE IF NOT EXISTS medication (
+  id SERIAL PRIMARY KEY,
+  client_id INT NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
+  teacher_id INT REFERENCES teachers(id) ON DELETE SET NULL,
+  general_notes TEXT,
+  medication_name VARCHAR(255),
+  medication_notes TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX IF NOT EXISTS idx_medication_client_id ON medication(client_id);
+CREATE INDEX IF NOT EXISTS idx_medication_teacher_id ON medication(teacher_id);
