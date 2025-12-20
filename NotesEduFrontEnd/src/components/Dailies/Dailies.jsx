@@ -3,6 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { getAllClients } from "../../api/clientsApi";
 import { createDaily } from "../../api/dailiesApi";
 import { createRating } from "../../api/ratingsApi";
+import {
+  getCategoriesByTeacher,
+  createCategory,
+  deleteCategory,
+  initializeDefaultCategories
+} from "../../api/categoriesApi";
 import SuccessModal from "../Modal/SuccessModal";
 
 const Dailies = () => {
@@ -35,21 +41,11 @@ const Dailies = () => {
     clientCount: 0,
     categories: [],
   });
-  const [categories, setCategories] = useState(() => {
-    const saved = localStorage.getItem("dailies_categories");
-    return saved ? JSON.parse(saved) : [
-      "Money Management",
-      "Meal Prep",
-      "Medocation Management",
-      "Housekeeping",
-      "Shopping",
-      "transportation",
-      "Communication",
-      "Health Management",
-    ];
-  });
+  const [categories, setCategories] = useState([]);
+  const [categoryObjects, setCategoryObjects] = useState([]);
   const [newCategory, setNewCategory] = useState("");
   const [showAddCategory, setShowAddCategory] = useState(false);
+  const [loadingCategories, setLoadingCategories] = useState(true);
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -66,6 +62,42 @@ const Dailies = () => {
     };
 
     fetchClients();
+  }, []);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoadingCategories(true);
+        const teacherData = localStorage.getItem("teacher");
+        const teacher = teacherData ? JSON.parse(teacherData) : null;
+
+        if (!teacher?.id) {
+          console.error("No teacher ID found");
+          setLoadingCategories(false);
+          return;
+        }
+
+        const data = await getCategoriesByTeacher(teacher.id);
+
+        // If no categories exist, initialize with defaults
+        if (data.length === 0) {
+          await initializeDefaultCategories(teacher.id);
+          const newData = await getCategoriesByTeacher(teacher.id);
+          setCategoryObjects(newData);
+          setCategories(newData.map(cat => cat.name));
+        } else {
+          setCategoryObjects(data);
+          setCategories(data.map(cat => cat.name));
+        }
+      } catch (err) {
+        console.error("Error fetching categories:", err);
+        setError("Failed to load categories. Please try again.");
+      } finally {
+        setLoadingCategories(false);
+      }
+    };
+
+    fetchCategories();
   }, []);
 
   // Save to localStorage whenever values change
@@ -89,27 +121,48 @@ const Dailies = () => {
     localStorage.setItem("dailies_selectedDate", selectedDate);
   }, [selectedDate]);
 
-  useEffect(() => {
-    localStorage.setItem("dailies_categories", JSON.stringify(categories));
-  }, [categories]);
-
   const handleReturn = () => {
     navigate("/");
   };
 
-  const handleAddCategory = () => {
+  const handleAddCategory = async () => {
     if (newCategory.trim() && !categories.includes(newCategory.trim())) {
-      setCategories([...categories, newCategory.trim()]);
-      setNewCategory("");
-      setShowAddCategory(false);
+      try {
+        const teacherData = localStorage.getItem("teacher");
+        const teacher = teacherData ? JSON.parse(teacherData) : null;
+
+        if (!teacher?.id) {
+          alert("No teacher ID found. Please log in again.");
+          return;
+        }
+
+        const newCat = await createCategory(teacher.id, newCategory.trim());
+        setCategoryObjects([...categoryObjects, newCat]);
+        setCategories([...categories, newCat.name]);
+        setNewCategory("");
+        setShowAddCategory(false);
+      } catch (err) {
+        console.error("Error creating category:", err);
+        alert(err.message || "Failed to create category. Please try again.");
+      }
     }
   };
 
-  const handleRemoveCategory = (categoryToRemove) => {
+  const handleRemoveCategory = async (categoryToRemove) => {
     if (confirm(`Are you sure you want to remove "${categoryToRemove}"?`)) {
-      setCategories(categories.filter((cat) => cat !== categoryToRemove));
-      // Also remove from selected categories if it was selected
-      setSelectedCategories(selectedCategories.filter((cat) => cat !== categoryToRemove));
+      try {
+        const categoryObj = categoryObjects.find(cat => cat.name === categoryToRemove);
+        if (categoryObj) {
+          await deleteCategory(categoryObj.id);
+          setCategoryObjects(categoryObjects.filter((cat) => cat.id !== categoryObj.id));
+          setCategories(categories.filter((cat) => cat !== categoryToRemove));
+          // Also remove from selected categories if it was selected
+          setSelectedCategories(selectedCategories.filter((cat) => cat !== categoryToRemove));
+        }
+      } catch (err) {
+        console.error("Error deleting category:", err);
+        alert("Failed to delete category. Please try again.");
+      }
     }
   };
 
@@ -234,7 +287,7 @@ const Dailies = () => {
     setSelectedClients([]);
     setSelectedCategories([]);
     setCategoryRatings({});
-    // Clear localStorage
+    // Clear localStorage (but not categories since they're in the database)
     localStorage.removeItem("dailies_text");
     localStorage.removeItem("dailies_selectedClients");
     localStorage.removeItem("dailies_selectedCategories");
@@ -351,7 +404,16 @@ const Dailies = () => {
                 )}
 
                 <div className="space-y-2 max-h-60 overflow-y-auto border border-gray-300 rounded-lg p-3">
-                  {categories.map((category, index) => (
+                  {loadingCategories ? (
+                    <div className="text-center py-4">
+                      <p className="text-gray-600 text-sm">Loading categories...</p>
+                    </div>
+                  ) : categories.length === 0 ? (
+                    <div className="text-center py-4">
+                      <p className="text-gray-600 text-sm">No categories yet. Click "Add Category" to create one.</p>
+                    </div>
+                  ) : (
+                    categories.map((category, index) => (
                     <div
                       key={index}
                       className="flex items-center p-2 hover:bg-gray-50 rounded transition-colors group"
@@ -379,7 +441,8 @@ const Dailies = () => {
                         </svg>
                       </button>
                     </div>
-                  ))}
+                    ))
+                  )}
                 </div>
               </div>
 
