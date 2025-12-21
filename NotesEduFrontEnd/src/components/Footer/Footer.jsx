@@ -27,7 +27,7 @@ const Footer = () => {
       <div className="footer-content">
         {teacher && (
           <p className="footer-teacher-name">
-            {teacher.first_name} {teacher.last_name}
+            Owner: {teacher.first_name} {teacher.last_name}
           </p>
         )}
         <div className="footer-right-section">
