@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getClientById } from "../../api/clientsApi";
+import { API_URL } from "../../config/api";
 
 const BasicInformation = () => {
   const navigate = useNavigate();
@@ -9,6 +10,17 @@ const BasicInformation = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    first_name: "",
+    middle_name: "",
+    last_name: "",
+    address: "",
+    phone: "",
+    guardian_first_name: "",
+    guardian_last_name: "",
+    guardian_phone: "",
+    guardian_email: ""
+  });
 
   useEffect(() => {
     const fetchClientData = async () => {
@@ -16,6 +28,17 @@ const BasicInformation = () => {
         setLoading(true);
         const clientData = await getClientById(clientId);
         setClient(clientData);
+        setFormData({
+          first_name: clientData.first_name || "",
+          middle_name: clientData.middle_name || "",
+          last_name: clientData.last_name || "",
+          address: clientData.address || "",
+          phone: clientData.phone || "",
+          guardian_first_name: clientData.guardian_first_name || "",
+          guardian_last_name: clientData.guardian_last_name || "",
+          guardian_phone: clientData.guardian_phone || "",
+          guardian_email: clientData.guardian_email || ""
+        });
       } catch (err) {
         console.error("Error fetching client data:", err);
         setError("Failed to load client data. Please try again.");
@@ -29,6 +52,38 @@ const BasicInformation = () => {
 
   const handleBack = () => {
     navigate(`/client/${clientId}`);
+  };
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSave = async () => {
+    try {
+      const response = await fetch(`${API_URL}/clients/${clientId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update client");
+      }
+
+      const updatedClient = await response.json();
+      setClient(updatedClient);
+      setIsEditing(false);
+      alert("Client information updated successfully!");
+    } catch (err) {
+      console.error("Error updating client:", err);
+      alert("Failed to update client information. Please try again.");
+    }
   };
 
   if (loading) {
@@ -123,7 +178,7 @@ const BasicInformation = () => {
                   Edit
                 </button>
                 <button
-                  onClick={() => setIsEditing(false)}
+                  onClick={handleSave}
                   disabled={!isEditing}
                   className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
@@ -148,16 +203,19 @@ const BasicInformation = () => {
         </div>
 
         {/* Basic Information Form */}
-        <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+        <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200 mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Client Information</h2>
           <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   First Name
                 </label>
                 <input
                   type="text"
-                  value={client.first_name}
+                  name="first_name"
+                  value={formData.first_name}
+                  onChange={handleChange}
                   readOnly={!isEditing}
                   className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                     !isEditing ? "bg-gray-50 cursor-not-allowed" : ""
@@ -171,7 +229,9 @@ const BasicInformation = () => {
                 </label>
                 <input
                   type="text"
-                  value={client.middle_name || ""}
+                  name="middle_name"
+                  value={formData.middle_name}
+                  onChange={handleChange}
                   readOnly={!isEditing}
                   className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                     !isEditing ? "bg-gray-50 cursor-not-allowed" : ""
@@ -185,13 +245,119 @@ const BasicInformation = () => {
                 </label>
                 <input
                   type="text"
-                  value={client.last_name}
+                  name="last_name"
+                  value={formData.last_name}
+                  onChange={handleChange}
                   readOnly={!isEditing}
                   className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                     !isEditing ? "bg-gray-50 cursor-not-allowed" : ""
                   }`}
                 />
               </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Address
+              </label>
+              <input
+                type="text"
+                name="address"
+                value={formData.address}
+                onChange={handleChange}
+                readOnly={!isEditing}
+                className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                  !isEditing ? "bg-gray-50 cursor-not-allowed" : ""
+                }`}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Phone Number
+              </label>
+              <input
+                type="tel"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
+                readOnly={!isEditing}
+                className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                  !isEditing ? "bg-gray-50 cursor-not-allowed" : ""
+                }`}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Guardian Information */}
+        <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Guardian Information</h2>
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Guardian First Name
+                </label>
+                <input
+                  type="text"
+                  name="guardian_first_name"
+                  value={formData.guardian_first_name}
+                  onChange={handleChange}
+                  readOnly={!isEditing}
+                  className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                    !isEditing ? "bg-gray-50 cursor-not-allowed" : ""
+                  }`}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Guardian Last Name
+                </label>
+                <input
+                  type="text"
+                  name="guardian_last_name"
+                  value={formData.guardian_last_name}
+                  onChange={handleChange}
+                  readOnly={!isEditing}
+                  className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                    !isEditing ? "bg-gray-50 cursor-not-allowed" : ""
+                  }`}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Guardian Phone Number
+              </label>
+              <input
+                type="tel"
+                name="guardian_phone"
+                value={formData.guardian_phone}
+                onChange={handleChange}
+                readOnly={!isEditing}
+                className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                  !isEditing ? "bg-gray-50 cursor-not-allowed" : ""
+                }`}
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Guardian Email
+              </label>
+              <input
+                type="email"
+                name="guardian_email"
+                value={formData.guardian_email}
+                onChange={handleChange}
+                readOnly={!isEditing}
+                className={`w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                  !isEditing ? "bg-gray-50 cursor-not-allowed" : ""
+                }`}
+              />
             </div>
           </div>
         </div>
