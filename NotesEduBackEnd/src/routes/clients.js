@@ -73,4 +73,19 @@ router.post("/:id/notes", async (req, res, next) => {
   }
 });
 
+router.delete("/:id", async (req, res, next) => {
+  try {
+    const { rows } = await pool.query(
+      "DELETE FROM clients WHERE id = $1 RETURNING *",
+      [req.params.id]
+    );
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Client not found" });
+    }
+    res.json({ message: "Client deleted successfully", client: rows[0] });
+  } catch (e) {
+    next(e);
+  }
+});
+
 export default router;

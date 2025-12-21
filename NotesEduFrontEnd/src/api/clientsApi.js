@@ -20,3 +20,14 @@ export async function createClient(payload) {
   });
   return r.json();
 }
+
+export async function deleteClient(id) {
+  const r = await fetch(`${API}/clients/${id}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+  if (!r.ok) {
+    throw new Error("Failed to delete client");
+  }
+  return r.json();
+}
