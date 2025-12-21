@@ -10,7 +10,7 @@ router.get("/", async (_req, res, next) => {
               t.first_name as teacher_first, t.last_name as teacher_last
        from notes n
        join clients c on c.id = n.client_id
-       left join teachers t on t.id = n.teacher_id
+       left join owners t on t.id = n.teacher_id
        order by n.created_at desc`
     );
     res.json(rows);
