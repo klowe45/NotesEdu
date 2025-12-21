@@ -26,7 +26,7 @@ router.get("/client/:clientId", async (req, res, next) => {
               t.first_name as teacher_first, t.last_name as teacher_last,
               d.title as daily_title
        FROM ratings r
-       LEFT JOIN teachers t on t.id = r.teacher_id
+       LEFT JOIN owners t on t.id = r.teacher_id
        LEFT JOIN dailies d on d.id = r.daily_id
        WHERE r.client_id = $1
        ORDER BY r.date DESC, r.created_at DESC`,
@@ -47,7 +47,7 @@ router.get("/daily/:dailyId", async (req, res, next) => {
               t.first_name as teacher_first, t.last_name as teacher_last
        FROM ratings r
        LEFT JOIN clients c on c.id = r.client_id
-       LEFT JOIN teachers t on t.id = r.teacher_id
+       LEFT JOIN owners t on t.id = r.teacher_id
        WHERE r.daily_id = $1
        ORDER BY r.category`,
       [req.params.dailyId]
@@ -68,7 +68,7 @@ router.get("/", async (_req, res, next) => {
               d.title as daily_title
        FROM ratings r
        LEFT JOIN clients c on c.id = r.client_id
-       LEFT JOIN teachers t on t.id = r.teacher_id
+       LEFT JOIN owners t on t.id = r.teacher_id
        LEFT JOIN dailies d on d.id = r.daily_id
        ORDER BY r.date DESC, r.created_at DESC`
     );

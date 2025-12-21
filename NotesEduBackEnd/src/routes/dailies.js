@@ -25,7 +25,7 @@ router.get("/client/:clientId", async (req, res, next) => {
       `SELECT d.id, d.title, d.body, d.date, d.created_at,
               t.first_name as teacher_first, t.last_name as teacher_last
        FROM dailies d
-       LEFT JOIN teachers t on t.id = d.teacher_id
+       LEFT JOIN owners t on t.id = d.teacher_id
        WHERE d.client_id = $1
        ORDER BY d.created_at DESC`,
       [req.params.clientId]
@@ -44,7 +44,7 @@ router.get("/", async (_req, res, next) => {
               t.first_name as teacher_first, t.last_name as teacher_last,
               c.first_name as client_first, c.last_name as client_last
        FROM dailies d
-       LEFT JOIN teachers t on t.id = d.teacher_id
+       LEFT JOIN owners t on t.id = d.teacher_id
        LEFT JOIN clients c on c.id = d.client_id
        ORDER BY d.created_at DESC`
     );
