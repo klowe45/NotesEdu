@@ -13,14 +13,12 @@
 
 .footer-content {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   padding-left: 0.75rem;
   padding-right: 0.75rem;
-}
-
-.footer-content.justify-end {
-  justify-content: flex-end;
+  position: relative;
+  width: 100%;
 }
 
 .footer-welcome-text,
@@ -32,6 +30,9 @@
 
 .footer-teacher-name {
   font-weight: 500;
+  position: absolute;
+  left: 0.75rem;
+  margin: 0;
 }
 
 .footer-right-section {
@@ -77,6 +78,10 @@
     padding-right: 1rem;
   }
 
+  .footer-teacher-name {
+    left: 1rem;
+  }
+
   .footer-welcome-text,
   .footer-brand-text {
     font-size: 0.875rem;
@@ -113,6 +118,10 @@
     padding-right: 1.5rem;
   }
 
+  .footer-teacher-name {
+    left: 1.5rem;
+  }
+
   .footer-welcome-text,
   .footer-brand-text {
     font-size: 1rem;
@@ -146,6 +155,10 @@
     width: 100%;
   }
 
+  .footer-teacher-name {
+    left: 2rem;
+  }
+
   .footer-welcome-text,
   .footer-brand-text {
     font-size: 1rem;
@@ -175,6 +188,10 @@
     padding-left: 3rem;
     padding-right: 3rem;
     max-width: 1536px;
+  }
+
+  .footer-teacher-name {
+    left: 3rem;
   }
 
   .footer-welcome-text,

@@ -5,10 +5,12 @@ import "./Header.css";
 const Header = ({ loggedIn, setLoggedIn }) => {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isAdminDropdownOpen, setIsAdminDropdownOpen] = useState(false);
 
   const handleLogout = () => {
     // Clear localStorage
     localStorage.removeItem("teacher");
+    localStorage.removeItem("organization");
     // Set logged in to false
     setLoggedIn(false);
     // Navigate to home
@@ -17,28 +19,75 @@ const Header = ({ loggedIn, setLoggedIn }) => {
 
   return (
     <header className="header-container">
-      {/* Logout Button - Left side */}
+      {/* Left Section - Logout and Admin buttons */}
       {loggedIn && (
         <div className="left-section">
-          <button
-            onClick={handleLogout}
-            className="logout-button"
-          >
-            <svg
-              className="logout-icon"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+          <div className="left-buttons-group">
+            <button
+              onClick={handleLogout}
+              className="logout-button"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-              />
-            </svg>
-            <span className="logout-text">Logout</span>
-          </button>
+              <svg
+                className="logout-icon"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                />
+              </svg>
+              <span className="logout-text">Logout</span>
+            </button>
+
+            <div className="admin-dropdown-container">
+              <button
+                onClick={() => setIsAdminDropdownOpen(!isAdminDropdownOpen)}
+                className="admin-button"
+              >
+                <span>Admin</span>
+                <svg
+                  className="admin-dropdown-icon"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+
+              {isAdminDropdownOpen && (
+                <div className="admin-dropdown-menu">
+                  <button
+                    onClick={() => {
+                      navigate("/add-staff");
+                      setIsAdminDropdownOpen(false);
+                    }}
+                    className="dropdown-menu-item"
+                  >
+                    Add Staff
+                  </button>
+                  <button
+                    onClick={() => {
+                      navigate("/staff-list");
+                      setIsAdminDropdownOpen(false);
+                    }}
+                    className="dropdown-menu-item"
+                  >
+                    Staff List
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       )}
 

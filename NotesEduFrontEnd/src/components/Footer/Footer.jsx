@@ -35,7 +35,7 @@ const Footer = () => {
 
   return (
     <footer className="footer-container">
-      <div className={`footer-content ${!organization && !teacher ? 'justify-end' : ''}`}>
+      <div className="footer-content">
         {organization ? (
           <p className="footer-teacher-name">
             {organization.name}
