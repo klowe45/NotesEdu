@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signin, organizationSignin } from "../../api/authApi";
+import { organizationSignin } from "../../api/authApi";
 
-const Signin = ({ setLoggedIn }) => {
+const OrganizationSignin = ({ setLoggedIn }) => {
   const navigate = useNavigate();
-  const [accountType, setAccountType] = useState("staff"); // "staff" or "organization"
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -38,43 +37,23 @@ const Signin = ({ setLoggedIn }) => {
     setIsSubmitting(true);
 
     try {
-      let result;
+      const result = await organizationSignin({
+        email: formData.email.trim(),
+        password: formData.password,
+      });
 
-      if (accountType === "organization") {
-        result = await organizationSignin({
-          email: formData.email.trim(),
-          password: formData.password,
-        });
-
-        if (result.error) {
-          throw new Error(result.error);
-        }
-
-        // Store organization data in localStorage
-        if (result.organization) {
-          localStorage.setItem("organization", JSON.stringify(result.organization));
-          // Clear any teacher data if present
-          localStorage.removeItem("teacher");
-        }
-      } else {
-        result = await signin({
-          email: formData.email.trim(),
-          password: formData.password,
-        });
-
-        if (result.error) {
-          throw new Error(result.error);
-        }
-
-        // Store teacher data in localStorage
-        if (result.teacher) {
-          localStorage.setItem("teacher", JSON.stringify(result.teacher));
-          // Clear any organization data if present
-          localStorage.removeItem("organization");
-        }
+      if (result.error) {
+        throw new Error(result.error);
       }
 
-      console.log("Signin successful:", result);
+      console.log("Organization signin successful:", result);
+
+      // Store organization data in localStorage
+      if (result.organization) {
+        localStorage.setItem("organization", JSON.stringify(result.organization));
+        // Clear any teacher data if present
+        localStorage.removeItem("teacher");
+      }
 
       // Set logged in state to true
       setLoggedIn(true);
@@ -115,7 +94,7 @@ const Signin = ({ setLoggedIn }) => {
           </button>
         </div>
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Sign In</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Organization Sign In</h1>
           <p className="text-lg text-gray-600">
             Welcome back to NeuroNotes
           </p>
@@ -131,37 +110,6 @@ const Signin = ({ setLoggedIn }) => {
         )}
 
         <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
-          {/* Account Type Selection */}
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Sign in as:
-            </label>
-            <div className="flex gap-4">
-              <label className="flex items-center cursor-pointer">
-                <input
-                  type="radio"
-                  name="accountType"
-                  value="staff"
-                  checked={accountType === "staff"}
-                  onChange={(e) => setAccountType(e.target.value)}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                />
-                <span className="ml-2 text-sm text-gray-900">Staff</span>
-              </label>
-              <label className="flex items-center cursor-pointer">
-                <input
-                  type="radio"
-                  name="accountType"
-                  value="organization"
-                  checked={accountType === "organization"}
-                  onChange={(e) => setAccountType(e.target.value)}
-                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                />
-                <span className="ml-2 text-sm text-gray-900">Organization</span>
-              </label>
-            </div>
-          </div>
-
           <form onSubmit={handleSubmit}>
             <div className="space-y-4">
               {/* Email */}
@@ -170,7 +118,7 @@ const Signin = ({ setLoggedIn }) => {
                   htmlFor="email"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Email
+                  Organization Email
                 </label>
                 <input
                   id="email"
@@ -179,7 +127,7 @@ const Signin = ({ setLoggedIn }) => {
                   value={formData.email}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-                  placeholder="Enter your email"
+                  placeholder="Enter your organization email"
                   required
                 />
               </div>
@@ -254,20 +202,20 @@ const Signin = ({ setLoggedIn }) => {
                 disabled={isSubmitting}
                 className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? "Signing In..." : "Sign In"}
+                {isSubmitting ? "Signing In..." : "Sign In as Organization"}
               </button>
             </div>
           </form>
 
-          {/* Sign Up Link */}
+          {/* Switch to Teacher Login */}
           <div className="mt-4 text-center">
             <p className="text-sm text-gray-600">
-              Don't have an organization account?{" "}
+              Sign in as a teacher?{" "}
               <button
-                onClick={() => navigate("/signup")}
+                onClick={() => navigate("/signin")}
                 className="text-blue-600 hover:text-blue-700 font-medium"
               >
-                Sign Up
+                Teacher Sign In
               </button>
             </p>
           </div>
@@ -277,4 +225,4 @@ const Signin = ({ setLoggedIn }) => {
   );
 };
 
-export default Signin;
+export default OrganizationSignin;

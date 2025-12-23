@@ -26,3 +26,21 @@ export async function signout() {
   });
   return r.json();
 }
+
+export async function organizationSignin(credentials) {
+  const r = await fetch(`${API}/auth/organization/signin`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(credentials),
+  });
+  return r.json();
+}
+
+export async function organizationSignup(orgData) {
+  const r = await fetch(`${API}/auth/organization/signup`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(orgData),
+  });
+  return r.json();
+}

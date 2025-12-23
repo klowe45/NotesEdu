@@ -19,6 +19,10 @@
   padding-right: 0.75rem;
 }
 
+.footer-content.justify-end {
+  justify-content: flex-end;
+}
+
 .footer-welcome-text,
 .footer-brand-text {
   margin: 0;

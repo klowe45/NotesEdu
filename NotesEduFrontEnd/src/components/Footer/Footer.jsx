@@ -4,6 +4,7 @@ import "./Footer.css";
 
 const Footer = () => {
   const [teacher, setTeacher] = useState(null);
+  const [organization, setOrganization] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,6 +17,16 @@ const Footer = () => {
         console.error("Error parsing teacher data:", err);
       }
     }
+
+    // Get organization from localStorage
+    const organizationData = localStorage.getItem("organization");
+    if (organizationData) {
+      try {
+        setOrganization(JSON.parse(organizationData));
+      } catch (err) {
+        console.error("Error parsing organization data:", err);
+      }
+    }
   }, []);
 
   const handleHomeClick = () => {
@@ -24,12 +35,16 @@ const Footer = () => {
 
   return (
     <footer className="footer-container">
-      <div className="footer-content">
-        {teacher && (
+      <div className={`footer-content ${!organization && !teacher ? 'justify-end' : ''}`}>
+        {organization ? (
+          <p className="footer-teacher-name">
+            {organization.name}
+          </p>
+        ) : teacher ? (
           <p className="footer-teacher-name">
             Owner: {teacher.first_name} {teacher.last_name}
           </p>
-        )}
+        ) : null}
         <div className="footer-right-section">
           <button
             onClick={handleHomeClick}

@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signup } from "../../api/authApi";
+import { organizationSignup } from "../../api/authApi";
 
 const Signup = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    organizationName: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -28,13 +27,8 @@ const Signup = () => {
     setError("");
 
     // Validation
-    if (!formData.firstName.trim()) {
-      setError("First name is required");
-      return;
-    }
-
-    if (!formData.lastName.trim()) {
-      setError("Last name is required");
+    if (!formData.organizationName.trim()) {
+      setError("Organization name is required");
       return;
     }
 
@@ -48,8 +42,8 @@ const Signup = () => {
       return;
     }
 
-    if (formData.password.length < 6) {
-      setError("Password must be at least 6 characters");
+    if (formData.password.length < 8) {
+      setError("Password must be at least 8 characters");
       return;
     }
 
@@ -61,15 +55,18 @@ const Signup = () => {
     setIsSubmitting(true);
 
     try {
-      const result = await signup({
-        first_name: formData.firstName.trim(),
-        last_name: formData.lastName.trim(),
+      const result = await organizationSignup({
+        name: formData.organizationName.trim(),
         email: formData.email.trim(),
         password: formData.password,
       });
 
-      console.log("Signup successful:", result);
-      navigate("/signin");
+      if (result.error) {
+        throw new Error(result.error);
+      }
+
+      console.log("Organization signup successful:", result);
+      navigate("/organization/signin");
     } catch (err) {
       console.error("Signup error:", err);
       setError(err.message || "Failed to sign up. Please try again.");
@@ -104,8 +101,8 @@ const Signup = () => {
           </button>
         </div>
         <div className="text-center">
-          <h1 className="text-4xl font-bold text-gray-900 mb-2">Sign Up</h1>
-          <p className="text-lg text-gray-600">Create your NeuroNotes account</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">Organization Sign Up</h1>
+          <p className="text-lg text-gray-600">Create your organization account</p>
         </div>
       </div>
 
@@ -120,42 +117,22 @@ const Signup = () => {
         <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
           <form onSubmit={handleSubmit}>
             <div className="space-y-4">
-              {/* First Name */}
+              {/* Organization Name */}
               <div className="space-y-2">
                 <label
-                  htmlFor="firstName"
+                  htmlFor="organizationName"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  First Name
+                  Organization Name
                 </label>
                 <input
-                  id="firstName"
-                  name="firstName"
+                  id="organizationName"
+                  name="organizationName"
                   type="text"
-                  value={formData.firstName}
+                  value={formData.organizationName}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-                  placeholder="Enter your first name"
-                  required
-                />
-              </div>
-
-              {/* Last Name */}
-              <div className="space-y-2">
-                <label
-                  htmlFor="lastName"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Last Name
-                </label>
-                <input
-                  id="lastName"
-                  name="lastName"
-                  type="text"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-                  placeholder="Enter your last name"
+                  placeholder="Enter your organization name"
                   required
                 />
               </div>
@@ -166,7 +143,7 @@ const Signup = () => {
                   htmlFor="email"
                   className="block text-sm font-medium text-gray-700"
                 >
-                  Email
+                  Organization Email
                 </label>
                 <input
                   id="email"
@@ -175,7 +152,7 @@ const Signup = () => {
                   value={formData.email}
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
-                  placeholder="Enter your email"
+                  placeholder="Enter your organization email"
                   required
                 />
               </div>
@@ -202,7 +179,7 @@ const Signup = () => {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-black hover:text-gray-700 transition-colors bg-transparent border-none p-0 focus:outline-none"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 text-black hover:text-gray-700 transition-colors bg-transparent border-none p-0 focus:outline-none"
                     aria-label={
                       showPassword ? "Hide password" : "Show password"
                     }
@@ -268,7 +245,7 @@ const Signup = () => {
                   <button
                     type="button"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-black hover:text-gray-700 transition-colors bg-transparent border-none p-0 focus:outline-none"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 text-black hover:text-gray-700 transition-colors bg-transparent border-none p-0 focus:outline-none"
                     aria-label={
                       showConfirmPassword ? "Hide password" : "Show password"
                     }
@@ -318,20 +295,20 @@ const Signup = () => {
                 disabled={isSubmitting}
                 className="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? "Creating Account..." : "Sign Up"}
+                {isSubmitting ? "Creating Organization..." : "Create Organization"}
               </button>
             </div>
           </form>
 
           {/* Sign In Link */}
-          <div className="mt-4 text-center">
+          <div className="mt-8 text-center">
             <p className="text-sm text-gray-600">
-              Already have an account?{" "}
+              Already have an organization account?{" "}
               <button
-                onClick={() => navigate("/signin")}
+                onClick={() => navigate("/organization/signin")}
                 className="text-blue-600 hover:text-blue-700 font-medium"
               >
-                Sign In
+                Organization Sign In
               </button>
             </p>
           </div>
