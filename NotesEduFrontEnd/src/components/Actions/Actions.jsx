@@ -1,8 +1,18 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Actions.css";
 
 const Actions = () => {
   const navigate = useNavigate();
+  const [isViewer, setIsViewer] = useState(false);
+
+  useEffect(() => {
+    // Check if user is a viewer
+    const viewerData = localStorage.getItem("viewer");
+    if (viewerData) {
+      setIsViewer(true);
+    }
+  }, []);
 
   const handleCreateClientClick = () => {
     navigate("create-client");
@@ -28,6 +38,18 @@ const Actions = () => {
     navigate("dailies");
   };
 
+  // If viewer, only show Clients button
+  if (isViewer) {
+    return (
+      <div className="actions-grid">
+        <button className="action-button" onClick={handleClientsClick}>
+          Clients
+        </button>
+      </div>
+    );
+  }
+
+  // For organization/staff, show all buttons
   return (
     <div className="actions-grid">
       <button className="action-button" onClick={handleCreateClientClick}>

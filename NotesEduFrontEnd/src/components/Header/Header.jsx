@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Header.css";
 
@@ -6,11 +6,23 @@ const Header = ({ loggedIn, setLoggedIn }) => {
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isAdminDropdownOpen, setIsAdminDropdownOpen] = useState(false);
+  const [isOwnerOrOrg, setIsOwnerOrOrg] = useState(false);
+  const [isViewer, setIsViewer] = useState(false);
+
+  useEffect(() => {
+    // Check if user is a teacher/owner or organization
+    const teacher = localStorage.getItem("teacher");
+    const organization = localStorage.getItem("organization");
+    const viewer = localStorage.getItem("viewer");
+    setIsOwnerOrOrg(!!(teacher || organization));
+    setIsViewer(!!viewer);
+  }, [loggedIn]);
 
   const handleLogout = () => {
     // Clear localStorage
     localStorage.removeItem("teacher");
     localStorage.removeItem("organization");
+    localStorage.removeItem("viewer");
     // Set logged in to false
     setLoggedIn(false);
     // Navigate to home
@@ -43,50 +55,76 @@ const Header = ({ loggedIn, setLoggedIn }) => {
               <span className="logout-text">Logout</span>
             </button>
 
-            <div className="admin-dropdown-container">
-              <button
-                onClick={() => setIsAdminDropdownOpen(!isAdminDropdownOpen)}
-                className="admin-button"
-              >
-                <span>Admin</span>
-                <svg
-                  className="admin-dropdown-icon"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
+            {/* Admin dropdown - only show for owners and organizations, not viewers */}
+            {isOwnerOrOrg && !isViewer && (
+              <div className="admin-dropdown-container">
+                <button
+                  onClick={() => setIsAdminDropdownOpen(!isAdminDropdownOpen)}
+                  className="admin-button"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
+                  <span>Admin</span>
+                  <svg
+                    className="admin-dropdown-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
 
-              {isAdminDropdownOpen && (
-                <div className="admin-dropdown-menu">
-                  <button
-                    onClick={() => {
-                      navigate("/add-staff");
-                      setIsAdminDropdownOpen(false);
-                    }}
-                    className="dropdown-menu-item"
-                  >
-                    Add Staff
-                  </button>
-                  <button
-                    onClick={() => {
-                      navigate("/staff-list");
-                      setIsAdminDropdownOpen(false);
-                    }}
-                    className="dropdown-menu-item"
-                  >
-                    Staff List
-                  </button>
-                </div>
-              )}
-            </div>
+                {isAdminDropdownOpen && (
+                  <div className="admin-dropdown-menu">
+                    <div className="admin-dropdown-section">
+                      <button
+                        onClick={() => {
+                          navigate("/add-staff");
+                          setIsAdminDropdownOpen(false);
+                        }}
+                        className="dropdown-menu-item"
+                      >
+                        Add Staff
+                      </button>
+                      <button
+                        onClick={() => {
+                          navigate("/staff-list");
+                          setIsAdminDropdownOpen(false);
+                        }}
+                        className="dropdown-menu-item"
+                      >
+                        Staff List
+                      </button>
+                    </div>
+                    <div className="admin-dropdown-divider"></div>
+                    <div className="admin-dropdown-section">
+                      <button
+                        onClick={() => {
+                          navigate("/add-viewer");
+                          setIsAdminDropdownOpen(false);
+                        }}
+                        className="dropdown-menu-item"
+                      >
+                        Add Viewer
+                      </button>
+                      <button
+                        onClick={() => {
+                          navigate("/viewer-list");
+                          setIsAdminDropdownOpen(false);
+                        }}
+                        className="dropdown-menu-item"
+                      >
+                        Viewer List
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -133,6 +171,15 @@ const Header = ({ loggedIn, setLoggedIn }) => {
                 className="dropdown-menu-item"
               >
                 Sign Up
+              </button>
+              <button
+                onClick={() => {
+                  navigate("/viewer/signin");
+                  setIsDropdownOpen(false);
+                }}
+                className="dropdown-menu-item"
+              >
+                Viewer Sign In
               </button>
             </div>
           )}

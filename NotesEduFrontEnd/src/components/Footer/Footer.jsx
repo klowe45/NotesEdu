@@ -5,6 +5,7 @@ import "./Footer.css";
 const Footer = () => {
   const [teacher, setTeacher] = useState(null);
   const [organization, setOrganization] = useState(null);
+  const [viewer, setViewer] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,6 +28,16 @@ const Footer = () => {
         console.error("Error parsing organization data:", err);
       }
     }
+
+    // Get viewer from localStorage
+    const viewerData = localStorage.getItem("viewer");
+    if (viewerData) {
+      try {
+        setViewer(JSON.parse(viewerData));
+      } catch (err) {
+        console.error("Error parsing viewer data:", err);
+      }
+    }
   }, []);
 
   const handleHomeClick = () => {
@@ -43,6 +54,10 @@ const Footer = () => {
         ) : teacher ? (
           <p className="footer-teacher-name">
             Owner: {teacher.first_name} {teacher.last_name}
+          </p>
+        ) : viewer ? (
+          <p className="footer-teacher-name">
+            {viewer.first_name} {viewer.last_name}
           </p>
         ) : null}
         <div className="footer-right-section">

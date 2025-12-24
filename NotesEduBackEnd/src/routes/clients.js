@@ -2,14 +2,36 @@ import { Router } from "express";
 import { pool } from "../db.js";
 const router = Router();
 
-router.get("/", async (_req, res, next) => {
+router.get("/", async (req, res, next) => {
   try {
-    const { rows } = await pool.query(
-      `SELECT id, first_name, middle_name, last_name, address, phone,
-              guardian_first_name, guardian_last_name, guardian_phone, guardian_email,
-              created_at
-       FROM clients ORDER BY id`
-    );
+    const { viewerId } = req.query;
+
+    let query;
+    let params = [];
+
+    if (viewerId) {
+      // Filter clients by viewer access
+      query = `
+        SELECT c.id, c.first_name, c.middle_name, c.last_name, c.address, c.phone,
+               c.guardian_first_name, c.guardian_last_name, c.guardian_phone, c.guardian_email,
+               c.org_id, c.created_by_staff_id, c.created_at
+        FROM clients c
+        INNER JOIN viewer_clients vc ON c.id = vc.client_id
+        WHERE vc.viewer_id = $1
+        ORDER BY c.id
+      `;
+      params = [viewerId];
+    } else {
+      // Return all clients
+      query = `
+        SELECT id, first_name, middle_name, last_name, address, phone,
+               guardian_first_name, guardian_last_name, guardian_phone, guardian_email,
+               org_id, created_by_staff_id, created_at
+        FROM clients ORDER BY id
+      `;
+    }
+
+    const { rows } = await pool.query(query, params);
     res.json(rows);
   } catch (e) {
     next(e);
@@ -18,11 +40,11 @@ router.get("/", async (_req, res, next) => {
 
 router.post("/", async (req, res, next) => {
   try {
-    const { first_name, middle_name, last_name } = req.body;
+    const { first_name, middle_name, last_name, org_id, staff_id } = req.body;
     const { rows } = await pool.query(
-      `insert into clients (first_name, middle_name, last_name)
-       values ($1, $2, $3) returning *`,
-      [first_name, middle_name || null, last_name]
+      `insert into clients (first_name, middle_name, last_name, org_id, created_by_staff_id)
+       values ($1, $2, $3, $4, $5) returning *`,
+      [first_name, middle_name || null, last_name, org_id || null, staff_id || null]
     );
     res.status(201).json(rows[0]);
   } catch (e) {
@@ -35,7 +57,7 @@ router.get("/:id", async (req, res, next) => {
     const { rows } = await pool.query(
       `SELECT id, first_name, middle_name, last_name, address, phone,
               guardian_first_name, guardian_last_name, guardian_phone, guardian_email,
-              created_at
+              org_id, created_by_staff_id, created_at
        FROM clients WHERE id = $1`,
       [req.params.id]
     );

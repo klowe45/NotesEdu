@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { signin, organizationSignin } from "../../api/authApi";
+import { signin, organizationSignin, viewerSignin } from "../../api/authApi";
 
 const Signin = ({ setLoggedIn }) => {
   const navigate = useNavigate();
-  const [accountType, setAccountType] = useState("staff"); // "staff" or "organization"
+  const [accountType, setAccountType] = useState("staff"); // "staff", "organization", or "viewer"
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -53,8 +53,26 @@ const Signin = ({ setLoggedIn }) => {
         // Store organization data in localStorage
         if (result.organization) {
           localStorage.setItem("organization", JSON.stringify(result.organization));
-          // Clear any teacher data if present
+          // Clear any other user data if present
           localStorage.removeItem("teacher");
+          localStorage.removeItem("viewer");
+        }
+      } else if (accountType === "viewer") {
+        result = await viewerSignin({
+          email: formData.email.trim(),
+          password: formData.password,
+        });
+
+        if (result.error) {
+          throw new Error(result.error);
+        }
+
+        // Store viewer data in localStorage
+        if (result.viewer) {
+          localStorage.setItem("viewer", JSON.stringify(result.viewer));
+          // Clear any other user data if present
+          localStorage.removeItem("teacher");
+          localStorage.removeItem("organization");
         }
       } else {
         result = await signin({
@@ -69,8 +87,9 @@ const Signin = ({ setLoggedIn }) => {
         // Store teacher data in localStorage
         if (result.teacher) {
           localStorage.setItem("teacher", JSON.stringify(result.teacher));
-          // Clear any organization data if present
+          // Clear any other user data if present
           localStorage.removeItem("organization");
+          localStorage.removeItem("viewer");
         }
       }
 
@@ -158,6 +177,17 @@ const Signin = ({ setLoggedIn }) => {
                   className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
                 />
                 <span className="ml-2 text-sm text-gray-900">Organization</span>
+              </label>
+              <label className="flex items-center cursor-pointer">
+                <input
+                  type="radio"
+                  name="accountType"
+                  value="viewer"
+                  checked={accountType === "viewer"}
+                  onChange={(e) => setAccountType(e.target.value)}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                />
+                <span className="ml-2 text-sm text-gray-900">Viewer</span>
               </label>
             </div>
           </div>
@@ -256,6 +286,15 @@ const Signin = ({ setLoggedIn }) => {
               >
                 {isSubmitting ? "Signing In..." : "Sign In"}
               </button>
+
+              {/* Forgot Password Button */}
+              <button
+                type="button"
+                onClick={() => navigate("/forgot-password")}
+                className="w-full px-4 py-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors font-medium"
+              >
+                Forgot Password?
+              </button>
             </div>
           </form>
 
@@ -271,6 +310,26 @@ const Signin = ({ setLoggedIn }) => {
               </button>
             </p>
           </div>
+        </div>
+
+        {/* Track Client Progress Section */}
+        <div className="mt-12 text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Track client progress!</h2>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Streamline client assessment, organize notes, and gain insights into progress
+            patterns with our intuitive teacher dashboard.
+          </p>
+        </div>
+
+        {/* About NeuroNotes Section */}
+        <div className="mt-12 text-center bg-white rounded-lg shadow-md p-8 border border-gray-200">
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">
+            About NeuroNotes
+          </h3>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            NeuroNotes makes it easy to track client progress, manage charts, and stay
+            organized with a clean, intuitive dashboard.
+          </p>
         </div>
       </div>
     </div>

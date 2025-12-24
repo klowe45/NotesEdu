@@ -2,8 +2,11 @@ import { API_URL } from '../config/api';
 
 const API = API_URL;
 
-export async function getAllClients() {
-  const r = await fetch(`${API}/clients`);
+export async function getAllClients(viewerId = null) {
+  const url = viewerId
+    ? `${API}/clients?viewerId=${viewerId}`
+    : `${API}/clients`;
+  const r = await fetch(url);
   return r.json();
 }
 

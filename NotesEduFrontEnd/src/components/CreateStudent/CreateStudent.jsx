@@ -26,6 +26,35 @@ const CreateStudent = () => {
       return;
     }
 
+    // Get organization and staff member from localStorage
+    let orgId = null;
+    let staffId = null;
+
+    const organizationData = localStorage.getItem("organization");
+    const staffData = localStorage.getItem("staff");
+
+    if (organizationData) {
+      try {
+        const organization = JSON.parse(organizationData);
+        orgId = organization.id;
+      } catch (err) {
+        console.error("Error parsing organization data:", err);
+      }
+    }
+
+    if (staffData) {
+      try {
+        const staff = JSON.parse(staffData);
+        staffId = staff.id;
+        // If staff member is logged in, use their org_id
+        if (staff.org_id) {
+          orgId = staff.org_id;
+        }
+      } catch (err) {
+        console.error("Error parsing staff data:", err);
+      }
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -33,6 +62,8 @@ const CreateStudent = () => {
         first_name: firstName.trim(),
         middle_name: middleName.trim() || null,
         last_name: lastName.trim(),
+        org_id: orgId,
+        staff_id: staffId,
       };
 
       const result = await createClient(clientData);

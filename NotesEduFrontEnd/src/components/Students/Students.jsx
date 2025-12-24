@@ -7,12 +7,25 @@ const Students = () => {
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isViewer, setIsViewer] = useState(false);
 
   useEffect(() => {
     const fetchClients = async () => {
       try {
         setLoading(true);
-        const data = await getAllClients();
+
+        // Check if user is a viewer
+        const viewerData = localStorage.getItem("viewer");
+        let viewerId = null;
+
+        if (viewerData) {
+          const viewer = JSON.parse(viewerData);
+          viewerId = viewer.id;
+          setIsViewer(true);
+        }
+
+        // Fetch clients, filtered by viewer if applicable
+        const data = await getAllClients(viewerId);
         setClients(data);
       } catch (err) {
         console.error("Error fetching clients:", err);
@@ -59,25 +72,27 @@ const Students = () => {
               Clients
             </h2>
 
-            <button
-              className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              onClick={() => navigate("/create-client")}
-            >
-              <svg
-                className="w-5 h-5 mr-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            {!isViewer && (
+              <button
+                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                onClick={() => navigate("/create-client")}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-              <span className="font-medium">Create Another Client</span>
-            </button>
+                <svg
+                  className="w-5 h-5 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+                <span className="font-medium">Create Another Client</span>
+              </button>
+            )}
           </div>
         </div>
 

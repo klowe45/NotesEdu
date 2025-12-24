@@ -28,13 +28,27 @@ const rawOrigins = (process.env.CORS_ORIGIN || "")
   .map((s) => s.trim())
   .filter(Boolean);
 
-// Allow localhost in dev by default
+// Always allow localhost ports in development
+const devPorts = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:5175",
+  "http://localhost:3000",
+  "http://localhost:4000"
+];
+
+// Add dev ports if not in production
+if (process.env.NODE_ENV !== "production") {
+  devPorts.forEach((port) => {
+    if (!rawOrigins.includes(port)) {
+      rawOrigins.push(port);
+    }
+  });
+}
+
+// If no origins configured at all, use dev ports
 if (!rawOrigins.length) {
-  rawOrigins.push(
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "http://localhost:4000"
-  );
+  rawOrigins.push(...devPorts);
 }
 
 app.set("trust proxy", 1);
@@ -101,3 +115,4 @@ assertDb().then(() => {
     console.log(`   Allowed origins: ${rawOrigins.join(", ") || "(none)"}`);
   });
 });
+

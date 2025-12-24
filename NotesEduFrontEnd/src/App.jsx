@@ -19,15 +19,25 @@ import AttendanceHistory from "./components/AttendanceHistory/AttendanceHistory"
 import BehavioralReports from "./components/BehavioralReports/BehavioralReports";
 import UploadReports from "./components/UploadReports/UploadReports";
 import Dailies from "./components/Dailies/Dailies";
+import Header from "./components/Header/Header";
+import AddStaff from "./components/AddStaff/AddStaff";
+import StaffList from "./components/StaffList/StaffList";
+import EditStaff from "./components/EditStaff/EditStaff";
+import AddViewer from "./components/AddViewer/AddViewer";
+import ViewerList from "./components/ViewerList/ViewerList";
+import EditViewer from "./components/EditViewer/EditViewer";
+import ViewerSignin from "./components/ViewerSignin/ViewerSignin";
+import ForgotPassword from "./components/ForgotPassword/ForgotPassword";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
 
-  // Check if teacher or organization is logged in on mount
+  // Check if teacher, organization, or viewer is logged in on mount
   useEffect(() => {
     const teacher = localStorage.getItem("teacher");
     const organization = localStorage.getItem("organization");
-    if (teacher || organization) {
+    const viewer = localStorage.getItem("viewer");
+    if (teacher || organization || viewer) {
       setLoggedIn(true);
     }
   }, []);
@@ -35,23 +45,50 @@ function App() {
   return (
     <div className="relative w-full max-w-[100vw] overflow-x-hidden">
       <div className="mx-auto w-full max-w-screen px-4 sm:px-6 lg:px-8">
+        <Header loggedIn={loggedIn} setLoggedIn={setLoggedIn} />
         <Routes>
-          <Route path="/" element={<Main loggedIn={loggedIn} setLoggedIn={setLoggedIn} />}></Route>
+          <Route
+            path="/"
+            element={<Main loggedIn={loggedIn} setLoggedIn={setLoggedIn} />}
+          ></Route>
           <Route path="signup" element={<Signup />}></Route>
-          <Route path="signin" element={<Signin setLoggedIn={setLoggedIn} />}></Route>
-          <Route path="organization/signin" element={<OrganizationSignin setLoggedIn={setLoggedIn} />}></Route>
+          <Route
+            path="signin"
+            element={<Signin setLoggedIn={setLoggedIn} />}
+          ></Route>
+          <Route
+            path="organization/signin"
+            element={<OrganizationSignin setLoggedIn={setLoggedIn} />}
+          ></Route>
+          <Route
+            path="viewer/signin"
+            element={<ViewerSignin setLoggedIn={setLoggedIn} />}
+          ></Route>
+          <Route path="forgot-password" element={<ForgotPassword />}></Route>
           <Route path="create-client" element={<CreateStudent />}></Route>
+          <Route path="add-staff" element={<AddStaff />}></Route>
+          <Route path="staff-list" element={<StaffList />}></Route>
+          <Route path="edit-staff/:staffId" element={<EditStaff />}></Route>
+          <Route path="add-viewer" element={<AddViewer />}></Route>
+          <Route path="viewer-list" element={<ViewerList />}></Route>
+          <Route path="edit-viewer/:viewerId" element={<EditViewer />}></Route>
           <Route path="notes" element={<Notes />}></Route>
           <Route path="clients" element={<Students />}></Route>
           <Route path="attendance" element={<Attendance />}></Route>
-          <Route path="attendance-history" element={<AttendanceHistory />}></Route>
-          <Route path="behavioral-reports" element={<BehavioralReports />}></Route>
-          <Route path="upload-reports/:clientId" element={<UploadReports />}></Route>
-          <Route path="dailies" element={<Dailies />}></Route>
           <Route
-            path="client/:clientId"
-            element={<StudentDashboard />}
+            path="attendance-history"
+            element={<AttendanceHistory />}
           ></Route>
+          <Route
+            path="behavioral-reports"
+            element={<BehavioralReports />}
+          ></Route>
+          <Route
+            path="upload-reports/:clientId"
+            element={<UploadReports />}
+          ></Route>
+          <Route path="dailies" element={<Dailies />}></Route>
+          <Route path="client/:clientId" element={<StudentDashboard />}></Route>
           <Route
             path="client/:clientId/notes"
             element={<ClientNotes />}
@@ -60,10 +97,7 @@ function App() {
             path="client/:clientId/dailies"
             element={<ClientDailies />}
           ></Route>
-          <Route
-            path="client/:clientId/charts"
-            element={<Charts />}
-          ></Route>
+          <Route path="client/:clientId/charts" element={<Charts />}></Route>
           <Route
             path="client/:clientId/medication"
             element={<Medication />}
