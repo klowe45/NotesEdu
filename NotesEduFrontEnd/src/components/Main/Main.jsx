@@ -14,20 +14,44 @@ const Main = ({ loggedIn, setLoggedIn }) => {
       <div className="hero-section">
         {/* Sign In and Sign Up buttons - Only show when not logged in */}
         {!loggedIn && (
-          <div className="auth-buttons-container">
-            <button
-              onClick={() => navigate("/signin")}
-              className="signin-button"
-            >
-              Sign In
-            </button>
-            <button
-              onClick={() => navigate("/signup")}
-              className="signup-button"
-            >
-              Sign Up
-            </button>
-          </div>
+          <>
+            <div className="auth-buttons-container">
+              <button
+                onClick={() => navigate("/signin")}
+                className="signin-button"
+              >
+                Sign In
+              </button>
+              <button
+                onClick={() => navigate("/signup")}
+                className="signup-button"
+              >
+                Sign Up
+              </button>
+            </div>
+
+            {/* Mission Statement */}
+            <div className="mt-12 mb-8 max-w-4xl mx-auto px-4">
+              <div className="bg-gradient-to-br from-slate-50 to-blue-50 rounded-lg border border-gray-200 p-8 md:p-10">
+                <div className="text-center mb-6">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 rounded-full mb-4">
+                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-sm font-semibold text-blue-600 uppercase tracking-wider mb-2">
+                    Our Mission
+                  </h3>
+                </div>
+                <p className="text-center text-gray-700 text-lg md:text-xl leading-relaxed font-light">
+                  Our mission is to empower care programs and educators with simple, reliable tools that support meaningful documentation, consistent care, and human growth—so staff can focus less on paperwork and more on people.
+                </p>
+                <div className="flex justify-center mt-6">
+                  <div className="w-20 h-1 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full"></div>
+                </div>
+              </div>
+            </div>
+          </>
         )}
 
         {loggedIn && (
