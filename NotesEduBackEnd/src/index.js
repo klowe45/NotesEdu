@@ -14,6 +14,7 @@ import dailies from "./routes/dailies.js";
 import ratings from "./routes/ratings.js";
 import medication from "./routes/medication.js";
 import categories from "./routes/categories.js";
+import behavioralReports from "./routes/behavioralReports.js";
 
 const app = express();
 
@@ -89,6 +90,7 @@ app.use("/api/dailies", dailies);
 app.use("/api/ratings", ratings);
 app.use("/api/medication", medication);
 app.use("/api/categories", categories);
+app.use("/api/behavioral-reports", behavioralReports);
 
 /** 404 for unknown API routes */
 app.use("/api", (_req, res) => {

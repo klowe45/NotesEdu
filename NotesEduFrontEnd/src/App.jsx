@@ -17,6 +17,7 @@ import OrganizationSignin from "./components/OrganizationSignin/OrganizationSign
 import Attendance from "./components/Attendance/Attendance";
 import AttendanceHistory from "./components/AttendanceHistory/AttendanceHistory";
 import BehavioralReports from "./components/BehavioralReports/BehavioralReports";
+import BehavioralReportsList from "./components/BehavioralReportsList/BehavioralReportsList";
 import UploadReports from "./components/UploadReports/UploadReports";
 import Dailies from "./components/Dailies/Dailies";
 import Header from "./components/Header/Header";
@@ -82,6 +83,10 @@ function App() {
           <Route
             path="behavioral-reports"
             element={<BehavioralReports />}
+          ></Route>
+          <Route
+            path="behavioral-reports-list"
+            element={<BehavioralReportsList />}
           ></Route>
           <Route
             path="upload-reports/:clientId"

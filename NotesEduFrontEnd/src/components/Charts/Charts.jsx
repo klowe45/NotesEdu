@@ -20,6 +20,8 @@ const Charts = () => {
   const [ratings, setRatings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [categoryOrder, setCategoryOrder] = useState([]);
+  const [draggedItem, setDraggedItem] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,6 +40,18 @@ const Charts = () => {
     };
 
     fetchData();
+  }, [clientId]);
+
+  // Load saved chart order from localStorage
+  useEffect(() => {
+    const savedOrder = localStorage.getItem(`chartOrder_${clientId}`);
+    if (savedOrder) {
+      try {
+        setCategoryOrder(JSON.parse(savedOrder));
+      } catch (err) {
+        console.error("Error loading chart order:", err);
+      }
+    }
   }, [clientId]);
 
   // Group ratings by category
@@ -63,6 +77,70 @@ const Charts = () => {
   };
 
   const categorizedRatings = groupRatingsByCategory();
+
+  // Get sorted categories based on saved order
+  const getSortedCategories = () => {
+    const categories = Object.keys(categorizedRatings);
+
+    if (categoryOrder.length === 0) {
+      return categories;
+    }
+
+    // Sort based on saved order, putting new categories at the end
+    const sorted = [...categories].sort((a, b) => {
+      const indexA = categoryOrder.indexOf(a);
+      const indexB = categoryOrder.indexOf(b);
+
+      if (indexA === -1 && indexB === -1) return 0;
+      if (indexA === -1) return 1;
+      if (indexB === -1) return -1;
+
+      return indexA - indexB;
+    });
+
+    return sorted;
+  };
+
+  // Save chart order to localStorage
+  const saveChartOrder = (newOrder) => {
+    setCategoryOrder(newOrder);
+    localStorage.setItem(`chartOrder_${clientId}`, JSON.stringify(newOrder));
+  };
+
+  // Drag handlers
+  const handleDragStart = (e, category) => {
+    setDraggedItem(category);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+  };
+
+  const handleDrop = (e, targetCategory) => {
+    e.preventDefault();
+
+    if (!draggedItem || draggedItem === targetCategory) {
+      setDraggedItem(null);
+      return;
+    }
+
+    const sortedCategories = getSortedCategories();
+    const draggedIndex = sortedCategories.indexOf(draggedItem);
+    const targetIndex = sortedCategories.indexOf(targetCategory);
+
+    const newOrder = [...sortedCategories];
+    newOrder.splice(draggedIndex, 1);
+    newOrder.splice(targetIndex, 0, draggedItem);
+
+    saveChartOrder(newOrder);
+    setDraggedItem(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedItem(null);
+  };
 
   const handleReturn = () => {
     navigate(`/client/${clientId}`);
@@ -145,52 +223,90 @@ const Charts = () => {
               </p>
             </div>
           ) : (
-            Object.entries(categorizedRatings).map(([category, data]) => (
-              <div
-                key={category}
-                className="bg-white rounded-lg shadow-md p-6 border border-gray-200"
-              >
-                <h3 className="text-2xl font-semibold text-gray-800 mb-4">
-                  {category}
-                </h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart
-                    data={data}
-                    margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis
-                      dataKey="date"
-                      label={{
-                        value: "Date",
-                        position: "insideBottom",
-                        offset: -5,
-                      }}
-                    />
-                    <YAxis
-                      domain={[0, 5]}
-                      ticks={[0, 1, 2, 3, 4, 5]}
-                      label={{
-                        value: "Rating",
-                        angle: -90,
-                        position: "insideLeft",
-                      }}
-                    />
-                    <Tooltip />
-                    <Legend />
-                    <Line
-                      type="monotone"
-                      dataKey="rating"
-                      stroke="#2563eb"
-                      strokeWidth={2}
-                      dot={{ fill: "#2563eb", r: 4 }}
-                      activeDot={{ r: 6 }}
-                      name="Rating"
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+            <>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
+                <p className="text-sm text-blue-800 text-center">
+                  💡 Drag and drop charts to reorder them. Your preferred order will be saved.
+                </p>
               </div>
-            ))
+              {getSortedCategories().map((category) => {
+                const data = categorizedRatings[category];
+                const isDragging = draggedItem === category;
+
+                return (
+                  <div
+                    key={category}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, category)}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, category)}
+                    onDragEnd={handleDragEnd}
+                    className={`bg-white rounded-lg shadow-md p-6 border-2 transition-all duration-200 cursor-move ${
+                      isDragging
+                        ? "border-blue-500 opacity-50 scale-95"
+                        : "border-gray-200 hover:border-blue-300 hover:shadow-lg"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="text-2xl font-semibold text-gray-800">
+                        {category}
+                      </h3>
+                      <div className="flex items-center gap-2 text-gray-400">
+                        <svg
+                          className="w-6 h-6"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 6h16M4 12h16M4 18h16"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                    <ResponsiveContainer width="100%" height={300}>
+                      <LineChart
+                        data={data}
+                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis
+                          dataKey="date"
+                          label={{
+                            value: "Date",
+                            position: "insideBottom",
+                            offset: -5,
+                          }}
+                        />
+                        <YAxis
+                          domain={[0, 5]}
+                          ticks={[0, 1, 2, 3, 4, 5]}
+                          label={{
+                            value: "Rating",
+                            angle: -90,
+                            position: "insideLeft",
+                          }}
+                        />
+                        <Tooltip />
+                        <Legend />
+                        <Line
+                          type="monotone"
+                          dataKey="rating"
+                          stroke="#2563eb"
+                          strokeWidth={2}
+                          dot={{ fill: "#2563eb", r: 4 }}
+                          activeDot={{ r: 6 }}
+                          name="Rating"
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                );
+              })}
+            </>
           )}
         </div>
       </div>

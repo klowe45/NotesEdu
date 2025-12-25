@@ -8,6 +8,13 @@ const CreateStudent = () => {
   const [firstName, setFirstName] = useState("");
   const [middleName, setMiddleName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [address, setAddress] = useState("");
+  const [phone, setPhone] = useState("");
+  const [birthday, setBirthday] = useState("");
+  const [guardianFirstName, setGuardianFirstName] = useState("");
+  const [guardianLastName, setGuardianLastName] = useState("");
+  const [guardianPhone, setGuardianPhone] = useState("");
+  const [guardianEmail, setGuardianEmail] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -62,6 +69,13 @@ const CreateStudent = () => {
         first_name: firstName.trim(),
         middle_name: middleName.trim() || null,
         last_name: lastName.trim(),
+        address: address.trim() || null,
+        phone: phone.trim() || null,
+        birthday: birthday || null,
+        guardian_first_name: guardianFirstName.trim() || null,
+        guardian_last_name: guardianLastName.trim() || null,
+        guardian_phone: guardianPhone.trim() || null,
+        guardian_email: guardianEmail.trim() || null,
         org_id: orgId,
         staff_id: staffId,
       };
@@ -186,6 +200,139 @@ const CreateStudent = () => {
                 placeholder="Enter last name"
                 required
               />
+            </div>
+
+            <div className="space-y-2">
+              <label
+                htmlFor="birthday"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Birthday
+              </label>
+              <input
+                id="birthday"
+                type="date"
+                value={birthday}
+                onChange={(e) => setBirthday(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label
+                  htmlFor="address"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Address
+                </label>
+                <input
+                  id="address"
+                  type="text"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                  placeholder="Enter address (optional)"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label
+                  htmlFor="phone"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Phone
+                </label>
+                <input
+                  id="phone"
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                  placeholder="Enter phone (optional)"
+                />
+              </div>
+            </div>
+
+            {/* Guardian Information Section */}
+            <div className="mt-8 pt-6 border-t border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                Guardian Information
+              </h3>
+
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="guardianFirstName"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Guardian First Name
+                    </label>
+                    <input
+                      id="guardianFirstName"
+                      type="text"
+                      value={guardianFirstName}
+                      onChange={(e) => setGuardianFirstName(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                      placeholder="Enter guardian first name (optional)"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="guardianLastName"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Guardian Last Name
+                    </label>
+                    <input
+                      id="guardianLastName"
+                      type="text"
+                      value={guardianLastName}
+                      onChange={(e) => setGuardianLastName(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                      placeholder="Enter guardian last name (optional)"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="guardianPhone"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Guardian Phone
+                    </label>
+                    <input
+                      id="guardianPhone"
+                      type="tel"
+                      value={guardianPhone}
+                      onChange={(e) => setGuardianPhone(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                      placeholder="Enter guardian phone (optional)"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <label
+                      htmlFor="guardianEmail"
+                      className="block text-sm font-medium text-gray-700"
+                    >
+                      Guardian Email
+                    </label>
+                    <input
+                      id="guardianEmail"
+                      type="email"
+                      value={guardianEmail}
+                      onChange={(e) => setGuardianEmail(e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                      placeholder="Enter guardian email (optional)"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </FormSample>

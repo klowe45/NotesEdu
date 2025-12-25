@@ -21,7 +21,7 @@ router.post("/signup", async (req, res, next) => {
 
     // Check if teacher already exists
     const existingTeacher = await pool.query(
-      "SELECT id FROM teachers WHERE email = $1",
+      "SELECT id FROM owners WHERE email = $1",
       [email]
     );
 
@@ -34,7 +34,7 @@ router.post("/signup", async (req, res, next) => {
 
     // Insert new teacher with hashed password
     const { rows } = await pool.query(
-      `INSERT INTO teachers (first_name, last_name, email, password)
+      `INSERT INTO owners (first_name, last_name, email, password)
        VALUES ($1, $2, $3, $4) RETURNING id, first_name, last_name, email, created_at`,
       [first_name, last_name, email, hashedPassword]
     );
@@ -60,7 +60,7 @@ router.post("/signin", async (req, res, next) => {
 
     // Find teacher by email
     const { rows } = await pool.query(
-      "SELECT id, first_name, last_name, email, password FROM teachers WHERE email = $1",
+      "SELECT id, first_name, last_name, email, password FROM owners WHERE email = $1",
       [email]
     );
 
@@ -601,8 +601,8 @@ router.post("/forgot-password", async (req, res, next) => {
     let tableName;
 
     if (userType === "staff") {
-      tableName = "teachers";
-      const result = await pool.query("SELECT id FROM teachers WHERE email = $1", [email]);
+      tableName = "owners";
+      const result = await pool.query("SELECT id FROM owners WHERE email = $1", [email]);
       userExists = result.rows.length > 0;
     } else if (userType === "organization") {
       tableName = "organizations";
@@ -681,7 +681,7 @@ router.post("/reset-password", async (req, res, next) => {
     // Update password based on user type
     if (userType === "staff") {
       await pool.query(
-        "UPDATE teachers SET password = $1 WHERE email = $2",
+        "UPDATE owners SET password = $1 WHERE email = $2",
         [hashedPassword, email]
       );
     } else if (userType === "organization") {

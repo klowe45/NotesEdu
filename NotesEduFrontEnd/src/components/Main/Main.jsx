@@ -39,7 +39,10 @@ const Main = ({ loggedIn, setLoggedIn }) => {
                   </h3>
                 </div>
                 <p className="text-center text-gray-700 text-lg md:text-xl leading-relaxed font-light">
-                  Our mission is to empower care programs and educators with simple, reliable tools that support meaningful documentation, consistent care, and human growth—so staff can focus less on paperwork and more on people.
+                  Our mission is to empower care programs and educators with
+                  simple, reliable tools that support meaningful documentation,
+                  consistent care, and human growth so staff can focus less on
+                  paperwork and more on people.
                 </p>
                 <div className="flex justify-center mt-6">
                   <div className="w-20 h-1 bg-gradient-to-r from-blue-400 to-indigo-500 rounded-full"></div>
@@ -54,9 +57,12 @@ const Main = ({ loggedIn, setLoggedIn }) => {
             {/* Welcome Message */}
             <div className="max-w-4xl mx-auto mb-10 px-4">
               <div className="bg-white border-l-4 border-blue-600 rounded-r-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-1">Welcome Back!</h2>
+                <h2 className="text-xl font-semibold text-gray-900 mb-1">
+                  Welcome Back!
+                </h2>
                 <p className="text-gray-600">
-                  Thank you for using NeuroNotes. We're here to help you make a difference every day.
+                  Thank you for using NeuroNotes. We're here to help you make a
+                  difference every day.
                 </p>
               </div>
             </div>
@@ -75,7 +81,10 @@ const Main = ({ loggedIn, setLoggedIn }) => {
                 </div>
 
                 <p className="text-center text-gray-700 text-lg md:text-xl leading-relaxed font-light">
-                  Our mission is to empower care programs and educators with simple, reliable tools that support meaningful documentation, consistent care, and human growth—so staff can focus less on paperwork and more on people.
+                  Our mission is to empower care programs with simple, reliable
+                  tools that support meaningful documentation, consistent care,
+                  and human growth so staff can focus less on paperwork and more
+                  on people.
                 </p>
 
                 {/* Bottom accent */}

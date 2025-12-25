@@ -11,6 +11,7 @@ const Attendance = () => {
   const [success, setSuccess] = useState("");
   const [attendance, setAttendance] = useState({});
   const [submitting, setSubmitting] = useState(false);
+  const [submittedToday, setSubmittedToday] = useState(new Set());
 
   useEffect(() => {
     const fetchClients = async () => {
@@ -31,6 +32,14 @@ const Attendance = () => {
           const recordDate = new Date(record.date).toISOString().split('T')[0];
           return recordDate === today;
         });
+
+        // Track clients who already have attendance submitted today
+        const submittedSet = new Set();
+        todayAttendance.forEach(record => {
+          const key = `${record.first_name.toLowerCase()}_${record.last_name.toLowerCase()}`;
+          submittedSet.add(key);
+        });
+        setSubmittedToday(submittedSet);
 
         // Initialize attendance state
         const initialAttendance = {};
@@ -56,6 +65,11 @@ const Attendance = () => {
 
     fetchClients();
   }, []);
+
+  const hasAttendanceToday = (client) => {
+    const key = `${client.first_name.toLowerCase()}_${client.last_name.toLowerCase()}`;
+    return submittedToday.has(key);
+  };
 
   const handleCheckboxChange = (clientId) => {
     setAttendance(prev => ({
@@ -178,26 +192,57 @@ const Attendance = () => {
           ) : (
             <>
               <div className="space-y-3">
-                {clients.map((client) => (
-                  <div
-                    key={client.id}
-                    className="flex items-center p-4 bg-white rounded-lg shadow-md border border-gray-200 hover:bg-gray-50"
-                  >
-                    <input
-                      type="checkbox"
-                      id={`client-${client.id}`}
-                      checked={attendance[client.id] || false}
-                      onChange={() => handleCheckboxChange(client.id)}
-                      className="w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 cursor-pointer"
-                    />
-                    <label
-                      htmlFor={`client-${client.id}`}
-                      className="ml-4 text-lg text-gray-800 cursor-pointer flex-1"
+                {clients.map((client) => {
+                  const alreadySubmitted = hasAttendanceToday(client);
+                  return (
+                    <div
+                      key={client.id}
+                      className={`flex items-center p-4 bg-white rounded-lg shadow-md border border-gray-200 ${
+                        alreadySubmitted ? 'opacity-75 bg-green-50 border-green-300' : 'hover:bg-gray-50'
+                      }`}
                     >
-                      {client.first_name} {client.middle_name} {client.last_name}
-                    </label>
-                  </div>
-                ))}
+                      <input
+                        type="checkbox"
+                        id={`client-${client.id}`}
+                        checked={attendance[client.id] || false}
+                        onChange={() => handleCheckboxChange(client.id)}
+                        disabled={alreadySubmitted}
+                        className={`w-5 h-5 text-blue-600 border-gray-300 rounded focus:ring-blue-500 ${
+                          alreadySubmitted ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'
+                        }`}
+                      />
+                      <label
+                        htmlFor={`client-${client.id}`}
+                        className={`ml-4 text-lg flex-1 ${
+                          alreadySubmitted ? 'text-gray-600 cursor-default' : 'text-gray-800 cursor-pointer'
+                        }`}
+                      >
+                        {client.first_name} {client.middle_name} {client.last_name}
+                      </label>
+
+                      {/* Green checkmark for already submitted */}
+                      {alreadySubmitted && (
+                        <div className="ml-auto">
+                          <div className="bg-green-500 rounded-full p-1.5 shadow-md">
+                            <svg
+                              className="w-5 h-5 text-white"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={3}
+                                d="M5 13l4 4L19 7"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
               <div className="flex justify-center mt-8">
                 <button
