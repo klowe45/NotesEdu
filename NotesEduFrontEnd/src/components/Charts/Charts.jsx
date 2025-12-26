@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getClientById } from "../../api/clientsApi";
 import { getRatingsByClient } from "../../api/ratingsApi";
@@ -21,7 +21,12 @@ const Charts = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [categoryOrder, setCategoryOrder] = useState([]);
-  const [draggedItem, setDraggedItem] = useState(null);
+  const [orderHistory, setOrderHistory] = useState([]);
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showOrderModal, setShowOrderModal] = useState(false);
+  const [tempOrder, setTempOrder] = useState([]);
+  const [draggedIndex, setDraggedIndex] = useState(null);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -101,45 +106,107 @@ const Charts = () => {
     return sorted;
   };
 
-  // Save chart order to localStorage
+  // Save chart order to localStorage with history
   const saveChartOrder = (newOrder) => {
+    const currentOrder = categoryOrder.length > 0 ? categoryOrder : getSortedCategories();
+    setOrderHistory((prev) => [...prev, currentOrder].slice(-10)); // Keep last 10 states
     setCategoryOrder(newOrder);
     localStorage.setItem(`chartOrder_${clientId}`, JSON.stringify(newOrder));
   };
 
-  // Drag handlers
-  const handleDragStart = (e, category) => {
-    setDraggedItem(category);
+  // Reset to default order
+  const handleResetOrder = () => {
+    const currentOrder = categoryOrder.length > 0 ? categoryOrder : getSortedCategories();
+    setOrderHistory((prev) => [...prev, currentOrder].slice(-10));
+    setCategoryOrder([]);
+    localStorage.removeItem(`chartOrder_${clientId}`);
+    setShowResetConfirm(false);
+  };
+
+  // Undo last reorder
+  const handleUndo = () => {
+    if (orderHistory.length === 0) return;
+
+    const previousOrder = orderHistory[orderHistory.length - 1];
+    setOrderHistory((prev) => prev.slice(0, -1));
+    setCategoryOrder(previousOrder);
+    localStorage.setItem(`chartOrder_${clientId}`, JSON.stringify(previousOrder));
+  };
+
+  // Open order modal
+  const openOrderModal = () => {
+    setTempOrder(getSortedCategories());
+    setShowOrderModal(true);
+  };
+
+  // Save order from modal
+  const handleSaveOrder = () => {
+    saveChartOrder(tempOrder);
+    setShowOrderModal(false);
+    setTempOrder([]);
+  };
+
+  // Cancel order changes
+  const handleCancelOrder = () => {
+    setShowOrderModal(false);
+    setTempOrder([]);
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  // Move item up in modal
+  const moveItemUp = (index) => {
+    if (index === 0) return;
+    const newOrder = [...tempOrder];
+    [newOrder[index - 1], newOrder[index]] = [newOrder[index], newOrder[index - 1]];
+    setTempOrder(newOrder);
+  };
+
+  // Move item down in modal
+  const moveItemDown = (index) => {
+    if (index === tempOrder.length - 1) return;
+    const newOrder = [...tempOrder];
+    [newOrder[index], newOrder[index + 1]] = [newOrder[index + 1], newOrder[index]];
+    setTempOrder(newOrder);
+  };
+
+  // Modal drag handlers
+  const handleModalDragStart = (e, index) => {
+    setDraggedIndex(index);
     e.dataTransfer.effectAllowed = "move";
   };
 
-  const handleDragOver = (e) => {
+  const handleModalDragOver = (e, index) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
+    setDragOverIndex(index);
   };
 
-  const handleDrop = (e, targetCategory) => {
+  const handleModalDragLeave = () => {
+    setDragOverIndex(null);
+  };
+
+  const handleModalDrop = (e, dropIndex) => {
     e.preventDefault();
 
-    if (!draggedItem || draggedItem === targetCategory) {
-      setDraggedItem(null);
+    if (draggedIndex === null || draggedIndex === dropIndex) {
+      setDraggedIndex(null);
+      setDragOverIndex(null);
       return;
     }
 
-    const sortedCategories = getSortedCategories();
-    const draggedIndex = sortedCategories.indexOf(draggedItem);
-    const targetIndex = sortedCategories.indexOf(targetCategory);
+    const newOrder = [...tempOrder];
+    const [draggedItem] = newOrder.splice(draggedIndex, 1);
+    newOrder.splice(dropIndex, 0, draggedItem);
 
-    const newOrder = [...sortedCategories];
-    newOrder.splice(draggedIndex, 1);
-    newOrder.splice(targetIndex, 0, draggedItem);
-
-    saveChartOrder(newOrder);
-    setDraggedItem(null);
+    setTempOrder(newOrder);
+    setDraggedIndex(null);
+    setDragOverIndex(null);
   };
 
-  const handleDragEnd = () => {
-    setDraggedItem(null);
+  const handleModalDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
   };
 
   const handleReturn = () => {
@@ -224,48 +291,202 @@ const Charts = () => {
             </div>
           ) : (
             <>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-                <p className="text-sm text-blue-800 text-center">
-                  💡 Drag and drop charts to reorder them. Your preferred order will be saved.
-                </p>
+              {/* Controls Bar */}
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-4">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <p className="text-sm text-blue-800 flex items-center gap-2">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                    </svg>
+                    Customize the order of your charts
+                  </p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={openOrderModal}
+                      className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg"
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                      </svg>
+                      Change Order
+                    </button>
+                    {orderHistory.length > 0 && (
+                      <button
+                        onClick={handleUndo}
+                        className="px-3 py-2 bg-white text-blue-700 text-sm font-medium rounded-lg hover:bg-blue-100 border border-blue-300 transition-all duration-200 flex items-center gap-1.5 shadow-sm hover:shadow"
+                        title="Undo last reorder"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                        </svg>
+                        Undo
+                      </button>
+                    )}
+                    {categoryOrder.length > 0 && (
+                      <button
+                        onClick={() => setShowResetConfirm(true)}
+                        className="px-3 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-100 border border-gray-300 transition-all duration-200 flex items-center gap-1.5 shadow-sm hover:shadow"
+                        title="Reset to default order"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                        </svg>
+                        Reset
+                      </button>
+                    )}
+                  </div>
+                </div>
               </div>
+
+              {/* Order Modal */}
+              {showOrderModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+                  <div className="bg-white rounded-lg shadow-2xl p-6 max-w-2xl w-full my-8">
+                    <div className="flex items-center justify-between mb-6">
+                      <h3 className="text-2xl font-bold text-gray-900">Change Chart Order</h3>
+                      <button
+                        onClick={handleCancelOrder}
+                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                      >
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    <p className="text-gray-600 mb-4 text-sm">
+                      Drag items to reorder, or use the arrow buttons. Your changes will be saved when you click "Save Order".
+                    </p>
+
+                    <div className="space-y-2 mb-6 max-h-96 overflow-y-auto">
+                      {tempOrder.map((category, index) => {
+                        const isDragging = draggedIndex === index;
+                        const isDropTarget = dragOverIndex === index;
+
+                        return (
+                          <div
+                            key={category}
+                            draggable
+                            onDragStart={(e) => handleModalDragStart(e, index)}
+                            onDragOver={(e) => handleModalDragOver(e, index)}
+                            onDragLeave={handleModalDragLeave}
+                            onDrop={(e) => handleModalDrop(e, index)}
+                            onDragEnd={handleModalDragEnd}
+                            className={`
+                              flex items-center justify-between p-4 rounded-lg border-2
+                              transition-all duration-200 cursor-move
+                              ${isDragging
+                                ? "border-blue-500 opacity-50 scale-95 bg-blue-50"
+                                : isDropTarget
+                                ? "border-green-500 bg-green-50 scale-[1.02]"
+                                : "border-gray-200 bg-white hover:border-blue-300 hover:shadow-md"
+                              }
+                            `}
+                          >
+                            <div className="flex items-center gap-3 flex-1">
+                              <div className="text-gray-400 cursor-grab active:cursor-grabbing">
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                              </div>
+                              <div className="flex items-center gap-3">
+                                <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-semibold text-sm">
+                                  {index + 1}
+                                </div>
+                                <span className="text-lg font-medium text-gray-800">{category}</span>
+                              </div>
+                            </div>
+
+                            <div className="flex gap-1">
+                              <button
+                                onClick={() => moveItemUp(index)}
+                                disabled={index === 0}
+                                className={`p-2 rounded-lg transition-all duration-200 ${
+                                  index === 0
+                                    ? "text-gray-300 cursor-not-allowed"
+                                    : "text-gray-600 hover:bg-gray-100 hover:text-blue-600"
+                                }`}
+                                title="Move up"
+                              >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                                </svg>
+                              </button>
+                              <button
+                                onClick={() => moveItemDown(index)}
+                                disabled={index === tempOrder.length - 1}
+                                className={`p-2 rounded-lg transition-all duration-200 ${
+                                  index === tempOrder.length - 1
+                                    ? "text-gray-300 cursor-not-allowed"
+                                    : "text-gray-600 hover:bg-gray-100 hover:text-blue-600"
+                                }`}
+                                title="Move down"
+                              >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    <div className="flex gap-3 justify-end">
+                      <button
+                        onClick={handleCancelOrder}
+                        className="px-6 py-2.5 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition-colors duration-200"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleSaveOrder}
+                        className="px-6 py-2.5 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors duration-200 shadow-md hover:shadow-lg"
+                      >
+                        Save Order
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Reset Confirmation Modal */}
+              {showResetConfirm && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                  <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full">
+                    <h3 className="text-xl font-bold text-gray-900 mb-3">Reset Chart Order?</h3>
+                    <p className="text-gray-600 mb-6">This will restore the default order. You can always rearrange them again.</p>
+                    <div className="flex gap-3 justify-end">
+                      <button
+                        onClick={() => setShowResetConfirm(false)}
+                        className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors duration-200"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={handleResetOrder}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                      >
+                        Reset Order
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Chart Cards */}
               {getSortedCategories().map((category) => {
                 const data = categorizedRatings[category];
-                const isDragging = draggedItem === category;
 
                 return (
                   <div
                     key={category}
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, category)}
-                    onDragOver={handleDragOver}
-                    onDrop={(e) => handleDrop(e, category)}
-                    onDragEnd={handleDragEnd}
-                    className={`bg-white rounded-lg shadow-md p-6 border-2 transition-all duration-200 cursor-move ${
-                      isDragging
-                        ? "border-blue-500 opacity-50 scale-95"
-                        : "border-gray-200 hover:border-blue-300 hover:shadow-lg"
-                    }`}
+                    className="bg-white rounded-lg shadow-md p-6 border-2 border-gray-200 hover:border-blue-300 hover:shadow-lg transition-all duration-200"
                   >
-                    <div className="flex items-center justify-between mb-4">
+                    <div className="mb-4">
                       <h3 className="text-2xl font-semibold text-gray-800">
                         {category}
                       </h3>
-                      <div className="flex items-center gap-2 text-gray-400">
-                        <svg
-                          className="w-6 h-6"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M4 6h16M4 12h16M4 18h16"
-                          />
-                        </svg>
-                      </div>
                     </div>
                     <ResponsiveContainer width="100%" height={300}>
                       <LineChart
