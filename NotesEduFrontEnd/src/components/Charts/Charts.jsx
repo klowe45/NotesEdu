@@ -250,7 +250,7 @@ const Charts = () => {
       <div className="container mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
+          <div className="relative flex items-center justify-between">
             <button
               className="flex items-center px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-200 group"
               onClick={handleReturn}
@@ -270,15 +270,28 @@ const Charts = () => {
               </svg>
               <span className="font-medium">Back to Dashboard</span>
             </button>
+
+            <div className="absolute left-1/2 -translate-x-1/2 text-center">
+              <h1 className="text-4xl font-bold text-gray-900">
+                {client.first_name}{" "}
+                {client.middle_name ? `${client.middle_name.charAt(0)}. ` : ""}
+                {client.last_name}
+              </h1>
+              <p className="text-gray-600 text-lg mt-2">
+                Rating Charts
+              </p>
+            </div>
+
+            <button
+              onClick={openOrderModal}
+              className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+              Change Order
+            </button>
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 text-center mt-4">
-            {client.first_name}{" "}
-            {client.middle_name ? `${client.middle_name.charAt(0)}. ` : ""}
-            {client.last_name}
-          </h1>
-          <p className="text-center text-gray-600 text-lg mt-2">
-            Rating Charts
-          </p>
         </div>
 
         {/* Charts */}
@@ -291,56 +304,9 @@ const Charts = () => {
             </div>
           ) : (
             <>
-              {/* Controls Bar */}
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-4">
-                <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-                  <p className="text-sm text-blue-800 flex items-center gap-2">
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
-                    </svg>
-                    Customize the order of your charts
-                  </p>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={openOrderModal}
-                      className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-all duration-200 flex items-center gap-2 shadow-md hover:shadow-lg"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                      </svg>
-                      Change Order
-                    </button>
-                    {orderHistory.length > 0 && (
-                      <button
-                        onClick={handleUndo}
-                        className="px-3 py-2 bg-white text-blue-700 text-sm font-medium rounded-lg hover:bg-blue-100 border border-blue-300 transition-all duration-200 flex items-center gap-1.5 shadow-sm hover:shadow"
-                        title="Undo last reorder"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
-                        </svg>
-                        Undo
-                      </button>
-                    )}
-                    {categoryOrder.length > 0 && (
-                      <button
-                        onClick={() => setShowResetConfirm(true)}
-                        className="px-3 py-2 bg-white text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-100 border border-gray-300 transition-all duration-200 flex items-center gap-1.5 shadow-sm hover:shadow"
-                        title="Reset to default order"
-                      >
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                        </svg>
-                        Reset
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-
               {/* Order Modal */}
               {showOrderModal && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+                <div className="fixed inset-0 backdrop-blur-md bg-white/10 flex items-center justify-center z-50 p-4 overflow-y-auto">
                   <div className="bg-white rounded-lg shadow-2xl p-6 max-w-2xl w-full my-8">
                     <div className="flex items-center justify-between mb-6">
                       <h3 className="text-2xl font-bold text-gray-900">Change Chart Order</h3>
@@ -452,7 +418,7 @@ const Charts = () => {
 
               {/* Reset Confirmation Modal */}
               {showResetConfirm && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+                <div className="fixed inset-0 backdrop-blur-md bg-white/10 flex items-center justify-center z-50 p-4">
                   <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full">
                     <h3 className="text-xl font-bold text-gray-900 mb-3">Reset Chart Order?</h3>
                     <p className="text-gray-600 mb-6">This will restore the default order. You can always rearrange them again.</p>

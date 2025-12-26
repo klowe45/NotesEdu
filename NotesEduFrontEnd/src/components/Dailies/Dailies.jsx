@@ -5,9 +5,12 @@ import { createDaily } from "../../api/dailiesApi";
 import { createRating } from "../../api/ratingsApi";
 import {
   getCategoriesByTeacher,
+  getCategoriesByOrganization,
   createCategory,
+  createOrgCategory,
   deleteCategory,
-  initializeDefaultCategories
+  initializeDefaultCategories,
+  initializeOrgDefaultCategories
 } from "../../api/categoriesApi";
 import SuccessModal from "../Modal/SuccessModal";
 
@@ -68,27 +71,45 @@ const Dailies = () => {
     const fetchCategories = async () => {
       try {
         setLoadingCategories(true);
+
+        // Check if user is from an organization (staff member)
+        const organizationData = localStorage.getItem("organization");
+        const organization = organizationData ? JSON.parse(organizationData) : null;
+
+        // Check if user is a teacher
         const teacherData = localStorage.getItem("teacher");
         const teacher = teacherData ? JSON.parse(teacherData) : null;
 
-        if (!teacher?.id) {
-          console.error("No teacher ID found");
+        let data = [];
+
+        if (organization?.id) {
+          // Fetch organization categories
+          console.log("Fetching categories for organization:", organization.id);
+          data = await getCategoriesByOrganization(organization.id);
+
+          // If no categories exist, initialize with defaults
+          if (data.length === 0) {
+            await initializeOrgDefaultCategories(organization.id);
+            data = await getCategoriesByOrganization(organization.id);
+          }
+        } else if (teacher?.id) {
+          // Fetch teacher categories
+          console.log("Fetching categories for teacher:", teacher.id);
+          data = await getCategoriesByTeacher(teacher.id);
+
+          // If no categories exist, initialize with defaults
+          if (data.length === 0) {
+            await initializeDefaultCategories(teacher.id);
+            data = await getCategoriesByTeacher(teacher.id);
+          }
+        } else {
+          console.error("No teacher or organization ID found");
           setLoadingCategories(false);
           return;
         }
 
-        const data = await getCategoriesByTeacher(teacher.id);
-
-        // If no categories exist, initialize with defaults
-        if (data.length === 0) {
-          await initializeDefaultCategories(teacher.id);
-          const newData = await getCategoriesByTeacher(teacher.id);
-          setCategoryObjects(newData);
-          setCategories(newData.map(cat => cat.name));
-        } else {
-          setCategoryObjects(data);
-          setCategories(data.map(cat => cat.name));
-        }
+        setCategoryObjects(data);
+        setCategories(data.map(cat => cat.name));
       } catch (err) {
         console.error("Error fetching categories:", err);
         setError("Failed to load categories. Please try again.");
@@ -128,15 +149,27 @@ const Dailies = () => {
   const handleAddCategory = async () => {
     if (newCategory.trim() && !categories.includes(newCategory.trim())) {
       try {
+        // Check if user is from an organization (staff member)
+        const organizationData = localStorage.getItem("organization");
+        const organization = organizationData ? JSON.parse(organizationData) : null;
+
+        // Check if user is a teacher
         const teacherData = localStorage.getItem("teacher");
         const teacher = teacherData ? JSON.parse(teacherData) : null;
 
-        if (!teacher?.id) {
-          alert("No teacher ID found. Please log in again.");
+        let newCat;
+
+        if (organization?.id) {
+          // Create organization category
+          newCat = await createOrgCategory(organization.id, newCategory.trim());
+        } else if (teacher?.id) {
+          // Create teacher category
+          newCat = await createCategory(teacher.id, newCategory.trim());
+        } else {
+          alert("No user ID found. Please log in again.");
           return;
         }
 
-        const newCat = await createCategory(teacher.id, newCategory.trim());
         setCategoryObjects([...categoryObjects, newCat]);
         setCategories([...categories, newCat.name]);
         setNewCategory("");

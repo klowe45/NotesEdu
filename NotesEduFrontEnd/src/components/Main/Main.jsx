@@ -1,13 +1,56 @@
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import mainImg from "../../assets/main-image-classroom.jpg";
 import Actions from "../Actions/Actions";
+import { getWelcomeMessage, getActiveNotification } from "../../api/notificationsApi";
 import "./Main.css";
 
 const Main = ({ loggedIn, setLoggedIn }) => {
   const navigate = useNavigate();
+  const [welcomeMessage, setWelcomeMessage] = useState("");
+  const [activeNotifications, setActiveNotifications] = useState([]);
+  const [currentNotificationIndex, setCurrentNotificationIndex] = useState(0);
 
   console.log("Main component - loggedIn:", loggedIn);
   console.log("localStorage teacher:", localStorage.getItem("teacher"));
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      const orgData = localStorage.getItem("organization");
+      if (orgData && loggedIn) {
+        try {
+          const org = JSON.parse(orgData);
+
+          // Fetch active notifications
+          const notifications = await getActiveNotification(org.id);
+          setActiveNotifications(notifications);
+          setCurrentNotificationIndex(0);
+
+          // Fetch welcome message
+          const data = await getWelcomeMessage(org.id);
+          setWelcomeMessage(data.welcome_message || "");
+        } catch (err) {
+          console.error("Error fetching messages:", err);
+        }
+      }
+    };
+
+    fetchMessages();
+  }, [loggedIn]);
+
+  const handleNextNotification = () => {
+    if (currentNotificationIndex < activeNotifications.length - 1) {
+      setCurrentNotificationIndex(currentNotificationIndex + 1);
+    }
+  };
+
+  const handlePreviousNotification = () => {
+    if (currentNotificationIndex > 0) {
+      setCurrentNotificationIndex(currentNotificationIndex - 1);
+    }
+  };
+
+  const currentNotification = activeNotifications[currentNotificationIndex];
 
   return (
     <main className="main-container">
@@ -54,17 +97,82 @@ const Main = ({ loggedIn, setLoggedIn }) => {
 
         {loggedIn && (
           <>
-            {/* Welcome Message */}
-            <div className="max-w-4xl mx-auto mb-10 px-4">
-              <div className="bg-white border-l-4 border-blue-600 rounded-r-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold text-gray-900 mb-1">
-                  Welcome Back!
-                </h2>
-                <p className="text-gray-600">
-                  Thank you for using NeuroNotes. We're here to help you make a
-                  difference every day.
-                </p>
-              </div>
+            {/* Welcome Message or Active Notification */}
+            <div className="max-w-6xl mx-auto mb-10 px-4">
+              {currentNotification ? (
+                // Display active notification with navigation
+                <div className={`w-full min-w-[900px] border-l-4 rounded-r-lg shadow-lg p-6 min-h-[140px] flex flex-col justify-center ${
+                  currentNotification.type === 'success' ? 'bg-green-50 border-green-600' :
+                  currentNotification.type === 'warning' ? 'bg-yellow-50 border-yellow-600' :
+                  currentNotification.type === 'error' ? 'bg-red-50 border-red-600' :
+                  'bg-blue-50 border-blue-600'
+                }`}>
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
+                      Notification {activeNotifications.length > 1 && `(${currentNotificationIndex + 1} of ${activeNotifications.length})`}
+                    </p>
+
+                    {/* Navigation arrows - only show if there are 2+ notifications */}
+                    {activeNotifications.length > 1 && (
+                      <div className="flex items-center gap-2">
+                        {/* Previous arrow */}
+                        <button
+                          onClick={handlePreviousNotification}
+                          disabled={currentNotificationIndex === 0}
+                          className={`rounded-full p-2 border border-gray-300 transition-all ${
+                            currentNotificationIndex === 0
+                              ? 'opacity-30 cursor-not-allowed bg-gray-100'
+                              : 'hover:bg-white hover:shadow-md cursor-pointer bg-white'
+                          }`}
+                        >
+                          <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                          </svg>
+                        </button>
+
+                        {/* Next arrow */}
+                        <button
+                          onClick={handleNextNotification}
+                          disabled={currentNotificationIndex === activeNotifications.length - 1}
+                          className={`rounded-full p-2 border border-gray-300 transition-all ${
+                            currentNotificationIndex === activeNotifications.length - 1
+                              ? 'opacity-30 cursor-not-allowed bg-gray-100'
+                              : 'hover:bg-white hover:shadow-md cursor-pointer bg-white'
+                          }`}
+                        >
+                          <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
+                    {currentNotification.title}
+                  </h2>
+                  <p className="text-lg md:text-xl text-gray-700 whitespace-pre-wrap leading-relaxed">
+                    {currentNotification.message}
+                  </p>
+                </div>
+              ) : welcomeMessage ? (
+                // Display custom welcome message
+                <div className="w-full min-w-[900px] bg-white border-l-4 border-blue-600 rounded-r-lg shadow-sm p-6 min-h-[140px] flex items-center">
+                  <p className="text-lg text-gray-600 whitespace-pre-wrap leading-relaxed">
+                    {welcomeMessage}
+                  </p>
+                </div>
+              ) : (
+                // Display default welcome message
+                <div className="w-full min-w-[900px] bg-white border-l-4 border-blue-600 rounded-r-lg shadow-sm p-6 min-h-[140px] flex flex-col justify-center">
+                  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
+                    Welcome Back!
+                  </h2>
+                  <p className="text-lg text-gray-600 leading-relaxed">
+                    Thank you for using NeuroNotes. We're here to help you make a
+                    difference every day.
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="action-container">

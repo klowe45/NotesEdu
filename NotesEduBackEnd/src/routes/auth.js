@@ -39,9 +39,36 @@ router.post("/signup", async (req, res, next) => {
       [first_name, last_name, email, hashedPassword]
     );
 
+    const newTeacher = rows[0];
+
+    // Initialize default categories for the new teacher
+    const defaultCategories = [
+      "Money Management",
+      "Meal Prep",
+      "Medication Management",
+      "Housekeeping",
+      "Shopping",
+      "Transportation",
+      "Communication",
+      "Health Management",
+    ];
+
+    for (const categoryName of defaultCategories) {
+      try {
+        await pool.query(
+          `INSERT INTO categories (teacher_id, name)
+           VALUES ($1, $2)`,
+          [newTeacher.id, categoryName]
+        );
+      } catch (catErr) {
+        // Log error but don't fail signup if category creation fails
+        console.error(`Failed to create default category "${categoryName}":`, catErr);
+      }
+    }
+
     res.status(201).json({
       message: "Teacher account created successfully",
-      teacher: rows[0],
+      teacher: newTeacher,
     });
   } catch (e) {
     next(e);
@@ -179,9 +206,36 @@ router.post("/organization/signup", async (req, res, next) => {
       [name, email, hashedPassword]
     );
 
+    const newOrg = rows[0];
+
+    // Initialize default categories for the new organization
+    const defaultCategories = [
+      "Money Management",
+      "Meal Prep",
+      "Medication Management",
+      "Housekeeping",
+      "Shopping",
+      "Transportation",
+      "Communication",
+      "Health Management",
+    ];
+
+    for (const categoryName of defaultCategories) {
+      try {
+        await pool.query(
+          `INSERT INTO categories (org_id, name)
+           VALUES ($1, $2)`,
+          [newOrg.id, categoryName]
+        );
+      } catch (catErr) {
+        // Log error but don't fail signup if category creation fails
+        console.error(`Failed to create default category "${categoryName}":`, catErr);
+      }
+    }
+
     res.status(201).json({
       message: "Organization account created successfully",
-      organization: rows[0],
+      organization: newOrg,
     });
   } catch (e) {
     next(e);

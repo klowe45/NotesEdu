@@ -19,15 +19,37 @@ router.get("/teacher/:teacherId", async (req, res, next) => {
   }
 });
 
-// Create a new category for a teacher
+// Get all categories for an organization
+router.get("/organization/:orgId", async (req, res, next) => {
+  try {
+    const { rows } = await pool.query(
+      `SELECT id, name, created_at
+       FROM categories
+       WHERE org_id = $1
+       ORDER BY created_at ASC`,
+      [req.params.orgId]
+    );
+    res.json(rows);
+  } catch (e) {
+    next(e);
+  }
+});
+
+// Create a new category for a teacher or organization
 router.post("/", async (req, res, next) => {
   try {
-    const { teacher_id, name } = req.body;
+    const { teacher_id, org_id, name } = req.body;
+
+    // Ensure either teacher_id or org_id is provided, but not both
+    if ((teacher_id && org_id) || (!teacher_id && !org_id)) {
+      return res.status(400).json({ error: 'Must provide either teacher_id or org_id, but not both' });
+    }
+
     const { rows } = await pool.query(
-      `INSERT INTO categories (teacher_id, name)
-       VALUES ($1, $2)
+      `INSERT INTO categories (teacher_id, org_id, name)
+       VALUES ($1, $2, $3)
        RETURNING *`,
-      [teacher_id, name]
+      [teacher_id || null, org_id || null, name]
     );
     res.status(201).json(rows[0]);
   } catch (e) {
@@ -55,10 +77,15 @@ router.delete("/:id", async (req, res, next) => {
   }
 });
 
-// Initialize default categories for a teacher
+// Initialize default categories for a teacher or organization
 router.post("/init", async (req, res, next) => {
   try {
-    const { teacher_id } = req.body;
+    const { teacher_id, org_id } = req.body;
+
+    // Ensure either teacher_id or org_id is provided, but not both
+    if ((teacher_id && org_id) || (!teacher_id && !org_id)) {
+      return res.status(400).json({ error: 'Must provide either teacher_id or org_id, but not both' });
+    }
 
     const defaultCategories = [
       "Money Management",
@@ -75,10 +102,10 @@ router.post("/init", async (req, res, next) => {
     for (const name of defaultCategories) {
       try {
         const { rows } = await pool.query(
-          `INSERT INTO categories (teacher_id, name)
-           VALUES ($1, $2)
+          `INSERT INTO categories (teacher_id, org_id, name)
+           VALUES ($1, $2, $3)
            RETURNING *`,
-          [teacher_id, name]
+          [teacher_id || null, org_id || null, name]
         );
         insertedCategories.push(rows[0]);
       } catch (e) {

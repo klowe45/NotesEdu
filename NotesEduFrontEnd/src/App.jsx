@@ -8,6 +8,7 @@ import Students from "./components/Students/Students";
 import StudentDashboard from "./components/StudentDashboard/StudentDashboard";
 import ClientNotes from "./components/ClientNotes/ClientNotes";
 import ClientDailies from "./components/ClientDailies/ClientDailies";
+import ClientAttendance from "./components/ClientAttendance/ClientAttendance";
 import Charts from "./components/Charts/Charts";
 import Medication from "./components/Medication/Medication";
 import BasicInformation from "./components/BasicInformation/BasicInformation";
@@ -29,6 +30,7 @@ import ViewerList from "./components/ViewerList/ViewerList";
 import EditViewer from "./components/EditViewer/EditViewer";
 import ViewerSignin from "./components/ViewerSignin/ViewerSignin";
 import ForgotPassword from "./components/ForgotPassword/ForgotPassword";
+import Notifications from "./components/Notifications/Notifications";
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -66,6 +68,7 @@ function App() {
             element={<ViewerSignin setLoggedIn={setLoggedIn} />}
           ></Route>
           <Route path="forgot-password" element={<ForgotPassword />}></Route>
+          <Route path="notifications" element={<Notifications />}></Route>
           <Route path="create-client" element={<CreateStudent />}></Route>
           <Route path="add-staff" element={<AddStaff />}></Route>
           <Route path="staff-list" element={<StaffList />}></Route>
@@ -101,6 +104,10 @@ function App() {
           <Route
             path="client/:clientId/dailies"
             element={<ClientDailies />}
+          ></Route>
+          <Route
+            path="client/:clientId/attendance"
+            element={<ClientAttendance />}
           ></Route>
           <Route path="client/:clientId/charts" element={<Charts />}></Route>
           <Route

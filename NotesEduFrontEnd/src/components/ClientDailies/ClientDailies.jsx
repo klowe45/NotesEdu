@@ -11,6 +11,7 @@ const ClientDailies = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState("");
+  const [selectedDaily, setSelectedDaily] = useState(null);
 
   const categories = [
     "Money Management",
@@ -189,7 +190,8 @@ const ClientDailies = () => {
                 .map((daily) => (
                   <div
                     key={daily.id}
-                    className="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow"
+                    onClick={() => setSelectedDaily(daily)}
+                    className="bg-white rounded-lg shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow cursor-pointer"
                   >
                     {daily.title && (
                       <div className="mb-3">
@@ -198,7 +200,7 @@ const ClientDailies = () => {
                         </span>
                       </div>
                     )}
-                    <p className="text-gray-700 leading-relaxed mb-4">
+                    <p className="text-gray-700 leading-relaxed mb-4 max-h-32 overflow-hidden">
                       {daily.body}
                     </p>
                     <div className="border-t border-gray-200 pt-3 mt-3">
@@ -235,6 +237,60 @@ const ClientDailies = () => {
               {filteredDailies.length !== 1 ? "s" : ""}
               {selectedCategoryFilter && ` in ${selectedCategoryFilter}`}
             </p>
+          </div>
+        )}
+
+        {/* Daily Detail Modal */}
+        {selectedDaily && (
+          <div className="fixed inset-0 backdrop-blur-md bg-white/10 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="sticky top-0 bg-white border-b border-gray-200 p-6 flex items-center justify-between">
+                <div className="flex-1">
+                  {selectedDaily.title && (
+                    <span className="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full mb-2">
+                      {selectedDaily.title}
+                    </span>
+                  )}
+                  <h3 className="text-xl font-bold text-gray-900">Daily Entry</h3>
+                </div>
+                <button
+                  onClick={() => setSelectedDaily(null)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="p-6">
+                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap mb-6">
+                  {selectedDaily.body}
+                </p>
+
+                <div className="border-t border-gray-200 pt-4 mt-4">
+                  {selectedDaily.teacher_first && (
+                    <p className="text-sm text-gray-600 mb-2">
+                      <span className="font-medium">Teacher:</span> {selectedDaily.teacher_first} {selectedDaily.teacher_last}
+                    </p>
+                  )}
+                  <p className="text-sm text-gray-500">
+                    <span className="font-medium">Date:</span>{" "}
+                    {selectedDaily.date
+                      ? new Date(selectedDaily.date).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })
+                      : new Date(selectedDaily.created_at).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>

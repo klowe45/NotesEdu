@@ -444,9 +444,30 @@ const StudentDashboard = () => {
 
           {/* Attendance Records Section */}
           <div className="bg-white rounded-lg shadow-md p-6 border border-gray-200">
-            <h3 className="text-xl font-semibold text-gray-800 mb-4">
-              Attendance Records
-            </h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-semibold text-gray-800">
+                Attendance Records
+              </h3>
+              <button
+                onClick={() => navigate(`/client/${clientId}/attendance`)}
+                className="text-sm text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1 hover:gap-2 transition-all"
+              >
+                View All
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </button>
+            </div>
             {attendance.length === 0 ? (
               <p className="text-gray-400 italic">
                 No attendance records found.
