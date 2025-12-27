@@ -253,7 +253,7 @@ router.get("/staff/:orgId", async (req, res, next) => {
 
     // Fetch all staff members for the organization
     const { rows } = await pool.query(
-      `SELECT id, first_name, middle_name, last_name, date_of_birth, email, role, status, created_at
+      `SELECT id, first_name, middle_name, last_name, date_of_birth, email, phone_number, role, status, created_at
        FROM staff
        WHERE org_id = $1
        ORDER BY created_at DESC`,
@@ -272,7 +272,7 @@ router.get("/staff/:orgId", async (req, res, next) => {
 // Add staff member route
 router.post("/staff/create", async (req, res, next) => {
   try {
-    const { firstName, middleName, lastName, dateOfBirth, email, password, isAdmin, orgId } = req.body;
+    const { firstName, middleName, lastName, dateOfBirth, email, phoneNumber, password, isAdmin, orgId } = req.body;
 
     // Validate required fields
     if (!firstName || !lastName || !dateOfBirth || !email || !password || !orgId) {
@@ -301,10 +301,10 @@ router.post("/staff/create", async (req, res, next) => {
 
     // Insert new staff member with all fields
     const { rows } = await pool.query(
-      `INSERT INTO staff (first_name, middle_name, last_name, date_of_birth, email, password_hash, org_id, role, status)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-       RETURNING id, first_name, middle_name, last_name, date_of_birth, email, role, status, created_at`,
-      [firstName, middleName || null, lastName, dateOfBirth, email, hashedPassword, orgId, role, 'active']
+      `INSERT INTO staff (first_name, middle_name, last_name, date_of_birth, email, phone_number, password_hash, org_id, role, status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+       RETURNING id, first_name, middle_name, last_name, date_of_birth, email, phone_number, role, status, created_at`,
+      [firstName, middleName || null, lastName, dateOfBirth, email, phoneNumber || null, hashedPassword, orgId, role, 'active']
     );
 
     res.status(201).json({
@@ -327,7 +327,7 @@ router.get("/staff/single/:staffId", async (req, res, next) => {
 
     // Fetch staff member by ID
     const { rows } = await pool.query(
-      `SELECT id, first_name, middle_name, last_name, date_of_birth, email, role, status, org_id, created_at
+      `SELECT id, first_name, middle_name, last_name, date_of_birth, email, phone_number, role, status, org_id, created_at
        FROM staff
        WHERE id = $1`,
       [staffId]
@@ -349,7 +349,7 @@ router.get("/staff/single/:staffId", async (req, res, next) => {
 router.put("/staff/update/:staffId", async (req, res, next) => {
   try {
     const { staffId } = req.params;
-    const { firstName, middleName, lastName, dateOfBirth, email, isAdmin } = req.body;
+    const { firstName, middleName, lastName, dateOfBirth, email, phoneNumber, isAdmin } = req.body;
 
     // Validate required fields
     if (!firstName || !lastName || !dateOfBirth || !email) {
@@ -382,10 +382,10 @@ router.put("/staff/update/:staffId", async (req, res, next) => {
     // Update staff member
     const { rows } = await pool.query(
       `UPDATE staff
-       SET first_name = $1, middle_name = $2, last_name = $3, date_of_birth = $4, email = $5, role = $6
-       WHERE id = $7
-       RETURNING id, first_name, middle_name, last_name, date_of_birth, email, role, status, created_at`,
-      [firstName, middleName || null, lastName, dateOfBirth, email, role, staffId]
+       SET first_name = $1, middle_name = $2, last_name = $3, date_of_birth = $4, email = $5, phone_number = $6, role = $7
+       WHERE id = $8
+       RETURNING id, first_name, middle_name, last_name, date_of_birth, email, phone_number, role, status, created_at`,
+      [firstName, middleName || null, lastName, dateOfBirth, email, phoneNumber || null, role, staffId]
     );
 
     res.json({
@@ -408,7 +408,7 @@ router.get("/viewer/:orgId", async (req, res, next) => {
 
     // Fetch all viewers for the organization
     const { rows } = await pool.query(
-      `SELECT id, first_name, last_name, email, status, created_at
+      `SELECT id, first_name, last_name, email, phone_number, status, created_at
        FROM viewers
        WHERE org_id = $1
        ORDER BY created_at DESC`,
@@ -427,7 +427,7 @@ router.get("/viewer/:orgId", async (req, res, next) => {
 // Add viewer route
 router.post("/viewer/create", async (req, res, next) => {
   try {
-    const { firstName, lastName, email, password, orgId } = req.body;
+    const { firstName, lastName, email, phoneNumber, password, orgId } = req.body;
 
     // Validate required fields
     if (!firstName || !lastName || !email || !password || !orgId) {
@@ -453,10 +453,10 @@ router.post("/viewer/create", async (req, res, next) => {
 
     // Insert new viewer
     const { rows } = await pool.query(
-      `INSERT INTO viewers (first_name, last_name, email, password_hash, org_id, status)
-       VALUES ($1, $2, $3, $4, $5, $6)
-       RETURNING id, first_name, last_name, email, status, created_at`,
-      [firstName, lastName, email, hashedPassword, orgId, 'active']
+      `INSERT INTO viewers (first_name, last_name, email, phone_number, password_hash, org_id, status)
+       VALUES ($1, $2, $3, $4, $5, $6, $7)
+       RETURNING id, first_name, last_name, email, phone_number, status, created_at`,
+      [firstName, lastName, email, phoneNumber || null, hashedPassword, orgId, 'active']
     );
 
     res.status(201).json({
@@ -479,7 +479,7 @@ router.get("/viewer/single/:viewerId", async (req, res, next) => {
 
     // Fetch viewer by ID
     const { rows } = await pool.query(
-      `SELECT id, first_name, last_name, email, status, org_id, created_at
+      `SELECT id, first_name, last_name, email, phone_number, status, org_id, created_at
        FROM viewers
        WHERE id = $1`,
       [viewerId]
@@ -501,7 +501,7 @@ router.get("/viewer/single/:viewerId", async (req, res, next) => {
 router.put("/viewer/update/:viewerId", async (req, res, next) => {
   try {
     const { viewerId } = req.params;
-    const { firstName, lastName, email } = req.body;
+    const { firstName, lastName, email, phoneNumber } = req.body;
 
     // Validate required fields
     if (!firstName || !lastName || !email) {
@@ -531,10 +531,10 @@ router.put("/viewer/update/:viewerId", async (req, res, next) => {
     // Update viewer
     const { rows } = await pool.query(
       `UPDATE viewers
-       SET first_name = $1, last_name = $2, email = $3
-       WHERE id = $4
-       RETURNING id, first_name, last_name, email, status, created_at`,
-      [firstName, lastName, email, viewerId]
+       SET first_name = $1, last_name = $2, email = $3, phone_number = $4
+       WHERE id = $5
+       RETURNING id, first_name, last_name, email, phone_number, status, created_at`,
+      [firstName, lastName, email, phoneNumber || null, viewerId]
     );
 
     res.json({

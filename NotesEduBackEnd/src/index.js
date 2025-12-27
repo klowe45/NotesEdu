@@ -16,6 +16,7 @@ import medication from "./routes/medication.js";
 import categories from "./routes/categories.js";
 import behavioralReports from "./routes/behavioralReports.js";
 import notifications from "./routes/notifications.js";
+import pushSubscriptions from "./routes/pushSubscriptions.js";
 
 const app = express();
 
@@ -93,6 +94,7 @@ app.use("/api/medication", medication);
 app.use("/api/categories", categories);
 app.use("/api/behavioral-reports", behavioralReports);
 app.use("/api/notifications", notifications);
+app.use("/api/push-subscriptions", pushSubscriptions);
 
 /** 404 for unknown API routes */
 app.use("/api", (_req, res) => {
